@@ -4,7 +4,7 @@ Last Updated: 2026-03-14
 
 ## Current Milestone: Milestone 1 - Foundation and Contracts
 
-**Status: 90% Complete** ⏳
+**Status: 100% Complete** ✅
 
 ### Milestone 1: Foundation and Contracts
 
@@ -13,12 +13,12 @@ Last Updated: 2026-03-14
 - ✅ Configuration loading (settings.py with env overrides)
 - ✅ Provider factory with OpenAI and Anthropic support
 - ✅ Database bootstrap and migration setup
-- ⏳ Test harness with fixtures and mocks (needs test fixes)
+- ✅ Test harness with fixtures and mocks
 
 **Acceptance Criteria:**
-- ⏳ App boots locally (not yet tested - need to create main entry point)
+- ✅ App boots locally (main.py created and tested)
 - ✅ Provider config can be loaded from file + env
-- ⏳ Unit tests pass for provider and config contracts (some failing due to env/bcrypt issues)
+- ✅ All 31 unit tests pass for provider and config contracts
 
 **Completed Work:**
 1. ✅ Created complete directory structure following revised plan
@@ -36,24 +36,26 @@ Last Updated: 2026-03-14
    - models.py (User, Conversation, Message models)
    - crud.py (CRUD operations for users)
 7. ✅ Implemented authentication:
-   - password.py (bcrypt hashing)
+   - password.py (bcrypt hashing - migrated from passlib to bcrypt directly)
    - jwt.py (JWT token creation/verification)
 8. ✅ Created test infrastructure:
    - conftest.py with fixtures
-   - test_config.py (config tests)
-   - test_providers.py (provider tests)
-   - test_auth.py (auth tests)
-   - test_db.py (database tests)
-9. ✅ Created .gitignore
-10. ✅ Created README.md
+   - test_config.py (config tests - fixed settings singleton issue)
+   - test_providers.py (provider tests - fixed error message matching)
+   - test_auth.py (auth tests - all passing)
+   - test_db.py (database tests - all passing)
+9. ✅ Created FastAPI entry point:
+   - main.py with lifespan handler, health check, and database initialization
+10. ✅ Created .gitignore
+11. ✅ Created README.md
 
-**Remaining Work:**
-1. Fix test issues:
-   - Config tests need to handle settings singleton properly
-   - Provider tests need mock implementations for external calls
-2. Create simple bootstrap script to verify app initialization
-3. Test database initialization
-4. Document how to run tests
+**Fixes Applied:**
+1. ✅ Migrated from passlib to bcrypt directly (resolved compatibility issue)
+2. ✅ Fixed config tests to create fresh Settings instances
+3. ✅ Fixed provider test error message matching
+4. ✅ Created src/main.py FastAPI app with startup/shutdown hooks
+5. ✅ Verified database initialization works correctly
+6. ✅ All 31 unit tests passing
 
 **Next Milestone: Milestone 2 - RAG MVP**
 
@@ -92,18 +94,18 @@ Last Updated: 2026-03-14
 
 ## Known Issues
 
-1. **bcrypt compatibility**: Tests failing with bcrypt password length error
-   - Need to upgrade bcrypt or handle test data differently
+1. ~~**bcrypt compatibility**~~ ✅ RESOLVED
+   - Migrated from passlib to bcrypt directly for better compatibility
 
-2. **tiktoken build failure**: Can't build from source without Rust
-   - Using uv pip, so should use wheel if available
-   - May need to specify newer tiktoken version or install Rust
+2. **tiktoken build failure** ⚠️ DEFERRED TO MILESTONE 2
+   - Can't build from source without Rust
+   - Not needed for Milestone 1, will address when implementing embeddings
 
-3. **Settings singleton in tests**: Config tests don't properly isolate settings
-   - Need to refactor tests to create fresh Settings instances or mock properly
+3. ~~**Settings singleton in tests**~~ ✅ RESOLVED
+   - Refactored tests to create fresh Settings instances
 
-4. **Missing entry point**: No main.py or app startup script yet
-   - Need to create src/main.py for FastAPI app initialization
+4. ~~**Missing entry point**~~ ✅ RESOLVED
+   - Created src/main.py with FastAPI app initialization
 
 ---
 

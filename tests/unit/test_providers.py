@@ -79,7 +79,7 @@ def test_anthropic_provider_missing_key():
     config = {"api_key": "test-anthropic-key"}
     provider = AnthropicProvider(config)
 
-    with pytest.raises(ValueError, match="OpenAI API key is required"):
+    with pytest.raises(ValueError, match="OPENAI_API_KEY is required for embeddings"):
         provider.get_embeddings()
 
 
