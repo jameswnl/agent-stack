@@ -1,0 +1,89 @@
+[tool.poetry]
+name = "langgraph-rag-service"
+version = "0.1.0"
+description = "RAG + Research service with multi-user authentication"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+# Core LangChain/LangGraph
+langgraph = "^0.2.45"
+langchain = "^0.3.13"
+langchain-core = "^0.3.21"
+langchain-community = "^0.3.13"
+pydantic = "^2.10.6"
+pydantic-settings = "^2.7.1"
+
+# LLM Providers
+langchain-openai = "^0.2.12"
+langchain-anthropic = "^0.3.0"
+
+# RAG
+faiss-cpu = "^1.9.0"
+tiktoken = "^0.8.0"
+
+# API/Auth/DB
+fastapi = "^0.115.6"
+uvicorn = {extras = ["standard"], version = "^0.34.0"}
+sqlalchemy = "^2.0.36"
+alembic = "^1.14.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+
+# Utilities
+python-dotenv = "^1.0.0"
+pyyaml = "^6.0.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-asyncio = "^0.24.0"
+pytest-cov = "^6.0.0"
+pytest-mock = "^3.14.0"
+ruff = "^0.8.4"
+mypy = "^1.14.0"
+httpx = "^0.28.1"
+
+[tool.poetry.group.optional]
+optional = true
+
+[tool.poetry.group.optional.dependencies]
+# Optional research tools (Milestone 4+)
+tavily-python = "^0.5.0"
+langchain-google-genai = "^2.0.8"
+langchain-ollama = "^0.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov=src --cov-report=term-missing"
+asyncio_mode = "auto"
+markers = [
+    "unit: Unit tests with no external dependencies",
+    "integration: Integration tests with in-memory/ephemeral services",
+    "contract: Contract tests for external service adapters",
+    "live: Live tests requiring external services (opt-in only)"
+]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
