@@ -1,0 +1,17 @@
+LangGraph Framework
+
+LangGraph is a library for building stateful, multi-actor applications with LLMs.
+
+Key Features:
+- State management for complex workflows
+- Cyclic graph support for iterative processes
+- Built on LangChain for easy integration
+- Type-safe state definitions
+
+LangGraph is particularly useful for building agents that need to:
+- Make multiple decisions
+- Maintain conversation context
+- Coordinate multiple tools
+- Handle complex branching logic
+
+The framework provides a clean abstraction for managing state transitions and enables developers to build sophisticated AI applications with clear, maintainable code.
