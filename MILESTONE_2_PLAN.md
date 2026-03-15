@@ -1,7 +1,8 @@
 # Milestone 2: RAG MVP - Implementation Plan
 
-**Status:** IN PROGRESS
+**Status:** IN PROGRESS (60% Complete)
 **Started:** 2026-03-14
+**Last Updated:** 2026-03-15
 
 ## Overview
 
@@ -102,26 +103,31 @@ class RAGState(TypedDict):
 
 ## Implementation Order
 
-### Phase 1: Document Processing ✅
+### Phase 1: Document Processing ✅ COMPLETE
 1. ✅ Create `src/rag/models.py` - Document, Chunk, Citation models
 2. ✅ Implement `src/rag/loader.py` - Document loader
 3. ✅ Implement `src/rag/chunker.py` - Text chunking
-4. ✅ Write unit tests for loader and chunker
+4. ✅ Create test fixtures (sample documents)
+5. ✅ Write unit tests for loader and chunker (22 tests passing)
 
-### Phase 2: Vector Store ⏳
-5. ⏳ Implement `src/rag/store.py` - FAISS vector store
-6. ⏳ Implement `src/rag/retriever.py` - Retrieval tool
-7. ⏳ Write unit tests for store and retriever
+**Committed:** e0f4b82
 
-### Phase 3: LangGraph Workflow ⏳
-8. ⏳ Implement `src/agent/rag_flow.py` - LangGraph nodes
+### Phase 2: Vector Store ✅ COMPLETE
+6. ✅ Implement `src/rag/store.py` - FAISS vector store
+7. ✅ Implement `src/rag/retriever.py` - Retrieval tool
+8. ✅ Write unit tests for store and retriever (30 tests passing)
+
+**Committed:** e0f4b82
+
+### Phase 3: LangGraph Workflow ⏳ IN PROGRESS
 9. ⏳ Implement `src/rag/citations.py` - Citation formatting
-10. ⏳ Write integration tests
+10. ⏳ Implement `src/agent/rag_flow.py` - LangGraph nodes and workflow
+11. ⏳ Write integration tests
 
-### Phase 4: Testing & Verification ⏳
-11. ⏳ Create test fixtures (sample documents)
+### Phase 4: Testing & Verification ⏳ PENDING
 12. ⏳ Integration test: index → query → cited response
 13. ⏳ Verify acceptance criteria
+14. ⏳ End-to-end demo
 
 ## Dependencies
 

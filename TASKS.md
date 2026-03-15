@@ -1,14 +1,14 @@
 # Task List and Progress
 
-Last Updated: 2026-03-14
+Last Updated: 2026-03-15
 
 ## Active Tasks
 
-### Task #1: Milestone 1 - Foundation and Contracts ✅ 90%
+### Task #2: Milestone 2 - RAG MVP ⏳ 60%
 
 **Status:** IN PROGRESS
 **Owner:** Implementation team
-**Milestone:** Milestone 1
+**Milestone:** Milestone 2
 
 **Description:** Complete foundation setup including project scaffold, provider abstraction, database setup, authentication, and test infrastructure.
 
@@ -40,29 +40,38 @@ Last Updated: 2026-03-14
 
 ---
 
-### Task #2: Milestone 2 - RAG MVP ⏳
-
-**Status:** PENDING
-**Owner:** Unassigned
-**Milestone:** Milestone 2
-**Blocked By:** Task #1
-
 **Description:** Implement document loading, chunking, FAISS indexing, retrieval, and basic LangGraph flow for RAG.
 
-**Subtasks:**
-- [ ] Document loader (Markdown/Text)
-- [ ] Chunking strategy with metadata
-- [ ] FAISS index manager
-- [ ] Retrieval tool with relevance threshold
-- [ ] LangGraph state definition
-- [ ] LangGraph nodes (retrieve, synthesize, cite)
-- [ ] Citation tracking
-- [ ] Unit tests for all components
-- [ ] Integration test: index -> query -> cited response
+**Progress:**
+- ✅ Document loader (Markdown/Text) - `src/rag/loader.py`
+- ✅ Chunking strategy with metadata - `src/rag/chunker.py`
+- ✅ Data models - `src/rag/models.py`
+- ✅ FAISS index manager - `src/rag/store.py`
+- ✅ Retrieval tool with relevance threshold - `src/rag/retriever.py`
+- ✅ Unit tests for Phase 1 & 2 - 52 tests passing
+- ⏳ Citation tracking - `src/rag/citations.py`
+- ⏳ LangGraph state definition
+- ⏳ LangGraph nodes (retrieve, synthesize, cite)
+- ⏳ Integration test: index -> query -> cited response
+
+**Completed Subtasks (60%):**
+- Phase 1: Document Processing (100%)
+- Phase 2: Vector Store (100%)
+- Phase 3: LangGraph Workflow (0%)
+- Phase 4: Integration Testing (0%)
+
+**Blockers:**
+- None
+
+**Next Steps:**
+1. Implement citation tracker
+2. Build LangGraph workflow with state machine
+3. Create integration test with mocked LLM
+4. Verify acceptance criteria
 
 ---
 
-### Task #3: Milestone 3 - Authenticated API MVP ⏳
+### Task #3: Milestone 3 - Authenticated API MVP ⏳ 0%
 
 **Status:** PENDING
 **Owner:** Unassigned
@@ -124,6 +133,27 @@ Last Updated: 2026-03-14
 
 ## Completed Tasks
 
+### Task #1: Milestone 1 - Foundation and Contracts ✅
+
+**Status:** COMPLETED
+**Completed:** 2026-03-14
+**Milestone:** Milestone 1
+
+Completed all foundation work including project scaffold, configuration, provider abstraction, database setup, authentication, and testing infrastructure.
+
+**Deliverables:**
+- ✅ Python project scaffold
+- ✅ Configuration loading (settings.py)
+- ✅ Provider factory (OpenAI, Anthropic)
+- ✅ Database models and CRUD
+- ✅ Authentication (bcrypt + JWT)
+- ✅ Test harness with 31 passing tests
+- ✅ FastAPI entry point (main.py)
+
+**Test Results:** 31 tests passing, 71% coverage
+
+---
+
 ### Task #6: Create pyproject.toml with all dependencies ✅
 
 **Status:** COMPLETED
@@ -145,9 +175,9 @@ Created .env.example with all environment variables and configuration templates.
 ## Task Metadata
 
 **Total Tasks:** 7
-**Completed:** 2
-**In Progress:** 1
-**Pending:** 4
+**Completed:** 3 (Milestone 1, pyproject.toml, .env.example)
+**In Progress:** 1 (Milestone 2 - 60% complete)
+**Pending:** 3 (Milestones 3, 4, 5)
 **Blocked:** 0
 
 **Milestone 1 Progress:** 90%

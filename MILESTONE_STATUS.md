@@ -1,8 +1,14 @@
 # Milestone Status
 
-Last Updated: 2026-03-14
+Last Updated: 2026-03-15
 
-## Current Milestone: Milestone 1 - Foundation and Contracts
+## Current Milestone: Milestone 2 - RAG MVP
+
+**Status: 60% Complete** ⏳
+
+---
+
+## Milestone 1: Foundation and Contracts
 
 **Status: 100% Complete** ✅
 
@@ -61,16 +67,68 @@ Last Updated: 2026-03-14
 
 ---
 
-## Milestone 2: RAG MVP (Not Started)
+## Milestone 2: RAG MVP (In Progress)
 
-**Status: 0% Complete** ⏳
+**Status: 60% Complete** ⏳
 
 **Deliverables:**
-- Document loader for Markdown/Text
-- Chunking strategy with metadata preservation
-- FAISS index manager
-- Retrieval tool with relevance threshold
-- LangGraph flow: retrieve -> synthesize -> cite
+- ✅ Document loader for Markdown/Text (Phase 1)
+- ✅ Chunking strategy with metadata preservation (Phase 1)
+- ✅ FAISS index manager (Phase 2)
+- ✅ Retrieval tool with relevance threshold (Phase 2)
+- ⏳ Citation tracking (Phase 3 - remaining)
+- ⏳ LangGraph flow: retrieve -> synthesize -> cite (Phase 3 - remaining)
+
+**Acceptance Criteria:**
+- ✅ Documents can be indexed from a directory
+- ⏳ RAG query returns cited answer from indexed fixtures
+- ⏳ No external network dependency required for core tests
+
+**Completed Work (Phases 1 & 2):**
+
+### Phase 1: Document Processing ✅
+1. ✅ Created `src/rag/models.py` - Data models (Document, Chunk, RetrievalResult, Citation)
+2. ✅ Implemented `src/rag/loader.py` - DocumentLoader for Markdown/Text files
+   - Recursive directory traversal
+   - File metadata extraction
+   - Support for .md, .markdown, .txt, .text extensions
+3. ✅ Implemented `src/rag/chunker.py` - TextChunker with overlap
+   - Configurable chunk size and overlap
+   - Metadata preservation
+   - Unique chunk ID generation
+4. ✅ Created test fixtures - Sample documents (doc1.md, doc2.md, doc3.txt)
+5. ✅ Written unit tests - 22 tests for loader and chunker (all passing)
+
+### Phase 2: Vector Store ✅
+6. ✅ Implemented `src/rag/store.py` - VectorStoreManager
+   - FAISS flat and IVF index support
+   - Document indexing with embeddings
+   - Similarity search with L2 distance
+   - Save/load to disk with pickle
+   - Vector store statistics
+7. ✅ Implemented `src/rag/retriever.py` - Retriever
+   - Relevance threshold filtering
+   - Context generation for LLM prompts
+   - Source tracking and extraction
+8. ✅ Written unit tests - 30 tests for store and retriever (all passing)
+   - Mock embeddings for deterministic testing
+   - Save/load persistence tests
+   - Threshold and relevance filtering tests
+
+**Test Results:**
+- Total unit tests: 83 passing (31 from M1 + 52 from M2)
+- Code coverage: 81%
+- No test failures
+
+**Remaining Work (Phase 3):**
+1. ⏳ Implement `src/rag/citations.py` - Citation formatting and tracking
+2. ⏳ Implement `src/agent/rag_flow.py` - LangGraph workflow
+   - State definition (RAGState)
+   - Retrieve node
+   - Synthesize node (LLM generation)
+   - Cite node (add source references)
+3. ⏳ Create integration test - End-to-end RAG flow
+4. ⏳ Verify all Milestone 2 acceptance criteria
 
 ---
 
@@ -97,15 +155,18 @@ Last Updated: 2026-03-14
 1. ~~**bcrypt compatibility**~~ ✅ RESOLVED
    - Migrated from passlib to bcrypt directly for better compatibility
 
-2. **tiktoken build failure** ⚠️ DEFERRED TO MILESTONE 2
-   - Can't build from source without Rust
-   - Not needed for Milestone 1, will address when implementing embeddings
+2. ~~**tiktoken build failure**~~ ✅ RESOLVED
+   - tiktoken 0.12.0 installed successfully via wheel
+   - Working with FAISS for embeddings in Milestone 2
 
 3. ~~**Settings singleton in tests**~~ ✅ RESOLVED
    - Refactored tests to create fresh Settings instances
 
 4. ~~**Missing entry point**~~ ✅ RESOLVED
    - Created src/main.py with FastAPI app initialization
+
+**Current Issues:**
+- None - all previous blockers resolved
 
 ---
 
@@ -116,10 +177,10 @@ Last Updated: 2026-03-14
 - ✅ FastAPI and Uvicorn
 - ✅ SQLAlchemy and Alembic
 - ✅ python-jose and PyJWT
-- ✅ passlib and bcrypt
+- ✅ bcrypt (migrated from passlib)
 - ✅ pytest and testing tools
-- ⏳ FAISS (deferred - will fail without Rust, but not needed for Milestone 1)
-- ⏳ tiktoken (deferred - will fail without Rust, but not needed for Milestone 1)
+- ✅ FAISS (faiss-cpu 1.13.2 - working)
+- ✅ tiktoken (0.12.0 - working)
 
 ---
 
