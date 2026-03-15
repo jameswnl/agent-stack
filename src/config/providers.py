@@ -30,17 +30,19 @@ def get_provider_config(provider_name: str | None = None) -> Dict[str, Any]:
     elif provider_name == "anthropic":
         if not settings.anthropic_api_key:
             raise ValueError("ANTHROPIC_API_KEY is required for Anthropic provider")
+        if not settings.openai_api_key:
+            raise ValueError(
+                "OPENAI_API_KEY is required for embeddings when using Anthropic provider"
+            )
         config["api_key"] = settings.anthropic_api_key
         # Anthropic uses OpenAI for embeddings
         config["openai_api_key"] = settings.openai_api_key
 
-    elif provider_name == "google":
-        if not settings.google_api_key:
-            raise ValueError("GOOGLE_API_KEY is required for Google provider")
-        config["api_key"] = settings.google_api_key
-
     else:
-        raise ValueError(f"Unknown provider: {provider_name}")
+        available = ", ".join(ProviderFactory.get_available_providers())
+        raise ValueError(
+            f"Unknown provider: {provider_name}. Available providers: {available}"
+        )
 
     return config
 
