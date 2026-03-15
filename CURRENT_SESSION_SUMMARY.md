@@ -3,6 +3,45 @@
 **Date:** 2026-03-15
 **Status:** ⏳ MILESTONE 2 IN PROGRESS (60% Complete)
 
+---
+
+## 👋 Quick Resume (Start Here)
+
+**Current State:**
+- ✅ Milestone 1: Foundation complete (31 tests)
+- ⏳ Milestone 2: RAG MVP at 60% (52 tests)
+  - ✅ Phase 1: Document processing (loader, chunker)
+  - ✅ Phase 2: Vector store (FAISS, retriever)
+  - ⏳ Phase 3: LangGraph workflow (next)
+
+**To Resume Work:**
+```bash
+cd ~/ws/langgraph
+source .venv/bin/activate
+
+# Check current status
+cat MILESTONE_STATUS.md
+
+# Run tests (should show 83 passing)
+PYTHONPATH=. pytest tests/unit/ -v -m unit
+
+# Review what's next
+# Scroll down to "Remaining Work (Phase 3)" section below
+```
+
+**Next Tasks (Phase 3 - 2-3 hours):**
+1. Implement `src/rag/citations.py` - Citation formatting
+2. Implement `src/agent/rag_flow.py` - LangGraph workflow
+3. Create integration test - End-to-end RAG
+
+**Key Files:**
+- `MILESTONE_STATUS.md` - Current milestone details
+- `MILESTONE_2_PLAN.md` - Phase breakdown
+- `TASKS.md` - Task tracking
+- This file - Detailed session log
+
+---
+
 ## Objective
 Implement Milestone 2: RAG MVP - Build a complete RAG system with document loading, vector indexing, retrieval, and LangGraph workflow.
 
