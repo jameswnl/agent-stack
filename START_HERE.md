@@ -2,13 +2,14 @@
 
 This file helps you quickly resume work on the LangGraph RAG service.
 
-## Current Status: Milestone 1 (90% Complete)
+## Current Status: Milestone 2 (60% Complete)
 
-**Last Updated:** 2026-03-14
+**Last Updated:** 2026-03-15
 
-You're currently working on **Milestone 1: Foundation and Contracts**.
+You're currently working on **Milestone 2: RAG MVP**.
 
-The project foundation is built, but needs test fixes and app bootstrap to be 100% complete.
+✅ **Milestone 1 Complete** - Foundation is solid
+⏳ **Milestone 2 In Progress** - Document loading and vector store done, LangGraph workflow remaining
 
 ---
 
@@ -50,47 +51,59 @@ PYTHONPATH=. pytest tests/unit/ -v -m unit
 
 ## 📋 What's Been Done
 
+### Milestone 1 ✅ (100% Complete)
 - ✅ **Project Structure:** Complete modular layout (src/, tests/, docs/, config/)
 - ✅ **Configuration:** Centralized settings with environment overrides
 - ✅ **Provider Abstraction:** OpenAI, Anthropic providers with factory pattern
 - ✅ **Database Layer:** SQLAlchemy models (User, Conversation, Message) + CRUD
 - ✅ **Authentication:** JWT tokens + bcrypt password hashing
-- ✅ **Test Infrastructure:** pytest with fixtures, markers, and conftest
-- ✅ **Documentation:** README, status tracking, task breakdown
+- ✅ **FastAPI App:** Entry point with health check and database initialization
+- ✅ **Test Infrastructure:** 31 unit tests passing, 71% coverage
 
-**Total:** 39 files committed (5,608 lines)
+### Milestone 2 ⏳ (60% Complete - Phase 1 & 2 Done)
+- ✅ **Document Loader:** Load Markdown/Text files from directories
+- ✅ **Text Chunker:** Split documents with overlap and metadata
+- ✅ **FAISS Vector Store:** Index and search with embeddings
+- ✅ **Retriever:** Relevance filtering and context generation
+- ✅ **Test Coverage:** 52 new unit tests (83 total), 81% coverage
+- ⏳ **Citation Tracker:** Remaining (Phase 3)
+- ⏳ **LangGraph Workflow:** Remaining (Phase 3)
+
+**Total:** 62 files committed (~7,500 lines)
 
 ---
 
 ## ⚠️ What Needs Attention
 
-### Immediate (Milestone 1 Completion)
+### Immediate (Milestone 2 Completion - Phase 3)
 
-1. **Fix Test Failures**
-   - Settings singleton isolation issue
-   - bcrypt compatibility error
-   - Provider contract test mocking
+1. **Citation Tracker** (`src/rag/citations.py`)
+   - Format citations from retrieval results
+   - Track source references in responses
+   - Link chunks to original documents
 
-2. **Create App Entry Point**
-   - Need `src/main.py` to initialize FastAPI app
-   - Verify database initialization works
-   - Test provider loading
+2. **LangGraph Workflow** (`src/agent/rag_flow.py`)
+   - Define RAGState (query, chunks, context, answer, citations)
+   - Implement retrieve node (search vector store)
+   - Implement synthesize node (LLM generation with context)
+   - Implement cite node (add source references)
+   - Build state machine graph
 
-3. **Verify Acceptance Criteria**
-   - App boots locally
-   - All unit tests pass
-   - Provider config loads correctly
+3. **Integration Test** (`tests/integration/test_rag_flow.py`)
+   - End-to-end test: load → index → query → cited answer
+   - Mock LLM responses for deterministic testing
+   - Verify citations are included
 
-**Estimated Time:** 1-2 hours
+**Estimated Time:** 2-3 hours
 
-### Next (Milestone 2 - RAG MVP)
+### Next (Milestone 3 - Authenticated API)
 
-After Milestone 1 is complete:
-- Document loader (Markdown/Text)
-- FAISS vector store
-- Retrieval tool
-- LangGraph workflow
-- Citation tracking
+After Milestone 2 is complete:
+- User registration/login endpoints
+- User-scoped document indexing
+- Authenticated chat endpoint
+- JWT middleware
+- Multi-user isolation
 
 ---
 
@@ -98,11 +111,15 @@ After Milestone 1 is complete:
 
 ### Testing
 ```bash
-# All unit tests
+# All unit tests (83 tests)
 PYTHONPATH=. pytest tests/unit/ -v -m unit
 
+# Only Milestone 2 RAG tests (52 tests)
+PYTHONPATH=. pytest tests/unit/test_loader.py tests/unit/test_chunker.py \
+                    tests/unit/test_store.py tests/unit/test_retriever.py -v
+
 # Single test file
-PYTHONPATH=. pytest tests/unit/test_config.py -v
+PYTHONPATH=. pytest tests/unit/test_loader.py -v
 
 # With coverage
 PYTHONPATH=. pytest --cov=src --cov-report=html
@@ -123,19 +140,67 @@ PYTHONPATH=. pytest --cov=src --cov-report=html
 PYTHONPATH=. python -c "from src.db.database import init_db; init_db()"
 ```
 
+### Try RAG Components (Manual Testing)
+```bash
+# Load documents and create chunks
+python -c "
+from src.rag.loader import DocumentLoader
+from src.rag.chunker import TextChunker
+
+loader = DocumentLoader()
+docs = loader.load_directory('tests/fixtures/documents')
+print(f'Loaded {len(docs)} documents')
+
+chunker = TextChunker(chunk_size=500, chunk_overlap=50)
+chunks = chunker.chunk_documents(docs)
+print(f'Created {len(chunks)} chunks')
+for i, chunk in enumerate(chunks[:3]):
+    print(f'Chunk {i}: {chunk.content[:100]}...')
+"
+
+# Test vector store (requires OpenAI API key in .env)
+python -c "
+from src.rag.loader import DocumentLoader
+from src.rag.chunker import TextChunker
+from src.rag.store import VectorStoreManager
+from src.providers.factory import ProviderFactory
+from src.config.providers import get_provider_config
+
+# Load and chunk documents
+loader = DocumentLoader()
+docs = loader.load_directory('tests/fixtures/documents')
+chunker = TextChunker(chunk_size=500, chunk_overlap=50)
+chunks = chunker.chunk_documents(docs)
+
+# Create vector store with real embeddings
+config = get_provider_config('openai')
+provider = ProviderFactory.create_provider('openai', config)
+embeddings = provider.get_embeddings()
+
+store = VectorStoreManager(embeddings=embeddings, dimension=1536)
+store.index_documents(chunks)
+
+# Search
+results = store.search('What is RAG?', k=3)
+for i, result in enumerate(results):
+    print(f'{i+1}. Score: {result.score:.3f}')
+    print(f'   {result.chunk.content[:100]}...')
+"
+```
+
 ---
 
 ## 📚 Key Files Reference
 
 | File | Purpose |
 |------|---------|
-| `IMPLEMENTATION_PLAN_REVISED.md` | Full implementation plan with 5 milestones |
-| `MILESTONE_STATUS.md` | Current milestone progress and blockers |
-| `TASKS.md` | Detailed task breakdown with status |
-| `CURRENT_SESSION_SUMMARY.md` | What was done in last session |
-| `QUICKSTART.md` | Quick command reference |
+| `START_HERE.md` | **This file** - Quick entry point for new sessions |
+| `MILESTONE_STATUS.md` | Current milestone progress (Milestone 2: 60%) |
+| `CURRENT_SESSION_SUMMARY.md` | Detailed summary of recent work (Phase 1 & 2) |
+| `TASKS.md` | Task breakdown with completion status |
+| `MILESTONE_2_PLAN.md` | Detailed Milestone 2 implementation plan |
+| `IMPLEMENTATION_PLAN_REVISED.md` | Full 5-milestone implementation plan |
 | `README.md` | Project overview and setup |
-| `START_HERE.md` | This file |
 
 ---
 
@@ -143,21 +208,23 @@ PYTHONPATH=. python -c "from src.db.database import init_db; init_db()"
 
 Choose one:
 
-### A. Complete Milestone 1 (Recommended)
-1. Read `MILESTONE_STATUS.md` → "Remaining Work" section
-2. Fix test issues
-3. Create app entry point
-4. Verify acceptance criteria
+### A. Continue Milestone 2 - Phase 3 (Recommended)
+1. Read `MILESTONE_STATUS.md` → "Milestone 2" section
+2. Read `MILESTONE_2_PLAN.md` → Phase 3 details
+3. Implement citation tracker and LangGraph workflow
+4. Create integration test
 
-### B. Skip to Milestone 2 (Not Recommended)
-1. Read `IMPLEMENTATION_PLAN_REVISED.md` → "Milestone 2" section
-2. Start document loader implementation
-3. Note: Milestone 1 incomplete means foundation may be unstable
+### B. Review What's Been Built
+1. Read `CURRENT_SESSION_SUMMARY.md` → detailed Phase 1 & 2 summary
+2. Run tests: `PYTHONPATH=. pytest tests/unit/ -v -m unit`
+3. Explore code in `src/rag/` folder
+4. Review test fixtures in `tests/fixtures/documents/`
 
-### C. Review Architecture
-1. Read `IMPLEMENTATION_PLAN_REVISED.md` from top
-2. Review architecture decisions
-3. Understand milestone structure and dependencies
+### C. Start Fresh Understanding
+1. Read `README.md` → project overview
+2. Read `IMPLEMENTATION_PLAN_REVISED.md` → full 5-milestone plan
+3. Read `MILESTONE_STATUS.md` → current progress
+4. Read `TASKS.md` → task breakdown
 
 ---
 
