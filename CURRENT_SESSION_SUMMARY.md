@@ -9,7 +9,7 @@
 
 **Current State:**
 - ✅ Milestone 1: Foundation complete (31 tests)
-- ⏳ Milestone 2: RAG MVP at 60% (52 tests)
+- ⏳ Milestone 2: RAG MVP at 60% (54 tests)
   - ✅ Phase 1: Document processing (loader, chunker)
   - ✅ Phase 2: Vector store (FAISS, retriever)
   - ⏳ Phase 3: LangGraph workflow (next)
@@ -22,7 +22,10 @@ source .venv/bin/activate
 # Check current status
 cat MILESTONE_STATUS.md
 
-# Run tests (should show 83 passing)
+# Run all tests (should show 85 passing: 83 unit + 2 contract)
+PYTHONPATH=. pytest tests/unit/ -v
+
+# Run only unit tests (83 passing)
 PYTHONPATH=. pytest tests/unit/ -v -m unit
 
 # Review what's next
@@ -135,10 +138,10 @@ Implement Milestone 2: RAG MVP - Build a complete RAG system with document loadi
 
 ### All Tests Passing ✅
 ```
-Total: 83 tests passing
+Total: 85 tests passing (83 unit + 2 contract)
 - Milestone 1: 31 tests (auth, config, db, providers)
-- Milestone 2: 52 tests (loader, chunker, store, retriever)
-Code Coverage: 81%
+- Milestone 2: 54 tests (loader, chunker, store, retriever)
+Code Coverage: 82%
 ```
 
 **Breakdown:**
@@ -263,18 +266,21 @@ tests/unit/test_retriever.py::15 tests ✅
 ## Commands to Verify Progress
 
 ```bash
-# Activate environment
+# Activate environment (required for all commands below)
 source .venv/bin/activate
 
-# Run all unit tests
+# Run all tests (85 total: 83 unit + 2 contract)
+PYTHONPATH=. pytest tests/unit/ -v
+
+# Run only unit tests (83 tests)
 PYTHONPATH=. pytest tests/unit/ -v -m unit
 
 # Run only Milestone 2 tests
 PYTHONPATH=. pytest tests/unit/test_loader.py tests/unit/test_chunker.py \
                     tests/unit/test_store.py tests/unit/test_retriever.py -v
 
-# Check coverage
-PYTHONPATH=. pytest tests/unit/ --cov=src/rag --cov-report=term-missing
+# Check coverage (82%)
+PYTHONPATH=. pytest tests/unit/ --cov=src --cov-report=term-missing
 
 # Test document loading manually
 python -c "

@@ -10,37 +10,7 @@ Last Updated: 2026-03-15
 **Owner:** Implementation team
 **Milestone:** Milestone 2
 
-**Description:** Complete foundation setup including project scaffold, provider abstraction, database setup, authentication, and test infrastructure.
-
-**Progress:**
-- ✅ Project directory structure created
-- ✅ pyproject.toml and requirements.txt created
-- ✅ .env.example created
-- ✅ Configuration module (settings.py) implemented
-- ✅ Provider abstraction layer implemented (base, openai, anthropic, factory)
-- ✅ Database models and CRUD implemented
-- ✅ Authentication modules implemented (password hashing, JWT)
-- ✅ Test fixtures and conftest.py created
-- ✅ Unit tests written (config, providers, auth, db)
-- ⏳ Fix test failures (bcrypt, settings isolation)
-- ⏳ Create app bootstrap script
-- ⏳ Verify database initialization works
-
-**Blockers:**
-- Some test failures due to:
-  - bcrypt/passlib compatibility issue
-  - Settings singleton not properly isolated in tests
-- tiktoken can't be installed (needs Rust compiler, but not required for Milestone 1)
-
-**Next Steps:**
-1. Fix bcrypt test issue (upgrade bcrypt or adjust test data)
-2. Refactor config tests to properly isolate Settings
-3. Create src/main.py for app initialization
-4. Verify all Milestone 1 acceptance criteria
-
----
-
-**Description:** Implement document loading, chunking, FAISS indexing, retrieval, and basic LangGraph flow for RAG.
+**Description:** Implement document loading, chunking, FAISS indexing, retrieval, and LangGraph workflow for RAG.
 
 **Progress:**
 - ✅ Document loader (Markdown/Text) - `src/rag/loader.py`
@@ -48,7 +18,7 @@ Last Updated: 2026-03-15
 - ✅ Data models - `src/rag/models.py`
 - ✅ FAISS index manager - `src/rag/store.py`
 - ✅ Retrieval tool with relevance threshold - `src/rag/retriever.py`
-- ✅ Unit tests for Phase 1 & 2 - 52 tests passing
+- ✅ Unit tests for Phase 1 & 2 - 54 tests passing
 - ⏳ Citation tracking - `src/rag/citations.py`
 - ⏳ LangGraph state definition
 - ⏳ LangGraph nodes (retrieve, synthesize, cite)
@@ -61,13 +31,13 @@ Last Updated: 2026-03-15
 - Phase 4: Integration Testing (0%)
 
 **Blockers:**
-- None
+- None (all previous blockers resolved in Milestone 1)
 
 **Next Steps:**
-1. Implement citation tracker
-2. Build LangGraph workflow with state machine
+1. Implement `src/rag/citations.py` - Citation tracker
+2. Implement `src/agent/rag_flow.py` - LangGraph workflow
 3. Create integration test with mocked LLM
-4. Verify acceptance criteria
+4. Verify Milestone 2 acceptance criteria
 
 ---
 
@@ -180,8 +150,12 @@ Created .env.example with all environment variables and configuration templates.
 **Pending:** 3 (Milestones 3, 4, 5)
 **Blocked:** 0
 
-**Milestone 1 Progress:** 90%
-**Overall Progress:** 13%
+**Milestone Progress:**
+- Milestone 1: 100% complete ✅
+- Milestone 2: 60% complete ⏳ (Phases 1 & 2 done, Phase 3 remaining)
+- Milestone 3-5: 0% (not started)
+
+**Overall Project Progress:** ~32% (2 of 5 milestones complete + 60% of M2)
 
 ---
 

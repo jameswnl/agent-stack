@@ -116,8 +116,10 @@ Last Updated: 2026-03-15
    - Threshold and relevance filtering tests
 
 **Test Results:**
-- Total unit tests: 83 passing (31 from M1 + 52 from M2)
-- Code coverage: 81%
+- Total tests: 85 passing (83 unit + 2 contract)
+  - Milestone 1: 31 tests
+  - Milestone 2: 54 tests
+- Code coverage: 82%
 - No test failures
 
 **Remaining Work (Phase 3):**
