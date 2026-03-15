@@ -1,7 +1,6 @@
 """Text chunking with metadata preservation."""
 
 import hashlib
-import re
 from typing import List, Dict, Any
 
 from .models import Document, Chunk
@@ -23,6 +22,13 @@ class TextChunker:
             chunk_overlap: Overlap between chunks in characters
             separator: Text separator for splitting (default: double newline)
         """
+        if chunk_size <= 0:
+            raise ValueError("chunk_size must be greater than 0")
+        if chunk_overlap < 0:
+            raise ValueError("chunk_overlap must be greater than or equal to 0")
+        if chunk_overlap >= chunk_size:
+            raise ValueError("chunk_overlap must be less than chunk_size")
+
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.separator = separator

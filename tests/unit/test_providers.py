@@ -58,6 +58,8 @@ def test_get_available_providers():
     assert "openai" in providers
     assert "anthropic" in providers
     assert isinstance(providers, list)
+    assert "google" not in providers
+    assert "ollama" not in providers
 
 
 @pytest.mark.unit

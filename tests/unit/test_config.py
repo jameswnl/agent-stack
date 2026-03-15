@@ -73,6 +73,19 @@ def test_get_provider_config_anthropic(monkeypatch):
 
 
 @pytest.mark.unit
+def test_validate_provider_key_requires_openai_for_anthropic():
+    """Test Anthropic validation requires OpenAI embeddings key."""
+    settings = Settings(
+        llm_provider="anthropic",
+        anthropic_api_key="test-anthropic-key",
+        openai_api_key=None,
+    )
+
+    with pytest.raises(ValueError, match="OPENAI_API_KEY is required for embeddings"):
+        settings.validate_provider_key()
+
+
+@pytest.mark.unit
 def test_get_provider_config_missing_key():
     """Test that missing API key raises ValueError."""
     # Create settings instance with no API key

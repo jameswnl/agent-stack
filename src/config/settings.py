@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     )
 
     # LLM Provider
-    llm_provider: Literal["openai", "anthropic", "ollama", "google"] = Field(
+    llm_provider: Literal["openai", "anthropic"] = Field(
         default="openai",
         description="Active LLM provider"
     )
@@ -71,8 +71,10 @@ class Settings(BaseSettings):
             raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai")
         elif self.llm_provider == "anthropic" and not self.anthropic_api_key:
             raise ValueError("ANTHROPIC_API_KEY is required when LLM_PROVIDER=anthropic")
-        elif self.llm_provider == "google" and not self.google_api_key:
-            raise ValueError("GOOGLE_API_KEY is required when LLM_PROVIDER=google")
+        elif self.llm_provider == "anthropic" and not self.openai_api_key:
+            raise ValueError(
+                "OPENAI_API_KEY is required for embeddings when LLM_PROVIDER=anthropic"
+            )
 
 
 # Global settings instance

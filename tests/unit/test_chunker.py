@@ -149,6 +149,23 @@ def test_chunk_size_configuration():
 
 
 @pytest.mark.unit
+def test_chunker_rejects_invalid_chunk_overlap():
+    """Test chunker rejects overlap equal to or greater than chunk size."""
+    with pytest.raises(ValueError, match="chunk_overlap must be less than chunk_size"):
+        TextChunker(chunk_size=50, chunk_overlap=50)
+
+    with pytest.raises(ValueError, match="chunk_overlap must be less than chunk_size"):
+        TextChunker(chunk_size=50, chunk_overlap=60)
+
+
+@pytest.mark.unit
+def test_chunker_rejects_non_positive_chunk_size():
+    """Test chunker rejects non-positive chunk size."""
+    with pytest.raises(ValueError, match="chunk_size must be greater than 0"):
+        TextChunker(chunk_size=0, chunk_overlap=0)
+
+
+@pytest.mark.unit
 def test_chunk_separator():
     """Test chunker with custom separator."""
     chunker = TextChunker(chunk_size=100, chunk_overlap=10, separator="\n")
