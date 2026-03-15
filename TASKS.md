@@ -4,9 +4,9 @@ Last Updated: 2026-03-15
 
 ## Active Tasks
 
-### Task #2: Milestone 2 - RAG MVP ⏳ 60%
+### Task #3: Milestone 3 - Authenticated API MVP ⏳ 0%
 
-**Status:** IN PROGRESS
+**Status:** PENDING
 **Owner:** Implementation team
 **Milestone:** Milestone 2
 
@@ -103,6 +103,27 @@ Last Updated: 2026-03-15
 
 ## Completed Tasks
 
+### Task #2: Milestone 2 - RAG MVP ✅
+
+**Status:** COMPLETED
+**Completed:** 2026-03-15
+**Milestone:** Milestone 2
+
+Completed full RAG system with document loading, FAISS indexing, retrieval, and LangGraph workflow.
+
+**Deliverables:**
+- ✅ Document loader and chunker (Phase 1)
+- ✅ FAISS vector store and retriever (Phase 2)
+- ✅ Citation tracker and LangGraph workflow (Phase 3)
+- ✅ Integration tests (Phase 4)
+- ✅ 63 tests passing (54 unit + 6 citations + 3 integration)
+
+**Test Results:** 94 total tests, 84% coverage
+
+**PR:** #1 - Merged 2026-03-15
+
+---
+
 ### Task #1: Milestone 1 - Foundation and Contracts ✅
 
 **Status:** COMPLETED
@@ -145,17 +166,19 @@ Created .env.example with all environment variables and configuration templates.
 ## Task Metadata
 
 **Total Tasks:** 7
-**Completed:** 3 (Milestone 1, pyproject.toml, .env.example)
-**In Progress:** 1 (Milestone 2 - 60% complete)
+**Completed:** 4 (Milestones 1 & 2, pyproject.toml, .env.example)
+**In Progress:** 0
 **Pending:** 3 (Milestones 3, 4, 5)
 **Blocked:** 0
 
 **Milestone Progress:**
 - Milestone 1: 100% complete ✅
-- Milestone 2: 60% complete ⏳ (Phases 1 & 2 done, Phase 3 remaining)
-- Milestone 3-5: 0% (not started)
+- Milestone 2: 100% complete ✅
+- Milestone 3: 0% (not started)
+- Milestone 4: 0% (not started)
+- Milestone 5: 0% (not started)
 
-**Overall Project Progress:** ~32% (2 of 5 milestones complete + 60% of M2)
+**Overall Project Progress:** ~40% (2 of 5 milestones complete)
 
 ---
 

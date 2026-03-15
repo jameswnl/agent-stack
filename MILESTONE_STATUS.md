@@ -4,7 +4,7 @@ Last Updated: 2026-03-15
 
 ## Current Milestone: Milestone 2 - RAG MVP
 
-**Status: 60% Complete** ⏳
+**Status: 100% Complete** ✅
 
 ---
 
@@ -67,22 +67,22 @@ Last Updated: 2026-03-15
 
 ---
 
-## Milestone 2: RAG MVP (In Progress)
+## Milestone 2: RAG MVP (Complete)
 
-**Status: 60% Complete** ⏳
+**Status: 100% Complete** ✅
 
 **Deliverables:**
 - ✅ Document loader for Markdown/Text (Phase 1)
 - ✅ Chunking strategy with metadata preservation (Phase 1)
 - ✅ FAISS index manager (Phase 2)
 - ✅ Retrieval tool with relevance threshold (Phase 2)
-- ⏳ Citation tracking (Phase 3 - remaining)
-- ⏳ LangGraph flow: retrieve -> synthesize -> cite (Phase 3 - remaining)
+- ✅ Citation tracking (Phase 3)
+- ✅ LangGraph flow: retrieve -> synthesize -> cite (Phase 3)
 
 **Acceptance Criteria:**
 - ✅ Documents can be indexed from a directory
-- ⏳ RAG query returns cited answer from indexed fixtures
-- ⏳ No external network dependency required for core tests
+- ✅ RAG query returns cited answer from indexed fixtures
+- ✅ No external network dependency required for core tests
 
 **Completed Work (Phases 1 & 2):**
 
@@ -116,27 +116,49 @@ Last Updated: 2026-03-15
    - Threshold and relevance filtering tests
 
 **Test Results:**
-- Total tests: 85 passing (83 unit + 2 contract)
+- Total tests: 94 passing (88 unit + 3 integration + 2 contract + 1 other)
   - Milestone 1: 31 tests
-  - Milestone 2: 54 tests
-- Code coverage: 82%
+  - Milestone 2: 63 tests (54 unit + 6 citations + 3 integration)
+- Code coverage: 84%
 - No test failures
 
-**Remaining Work (Phase 3):**
-1. ⏳ Implement `src/rag/citations.py` - Citation formatting and tracking
-2. ⏳ Implement `src/agent/rag_flow.py` - LangGraph workflow
-   - State definition (RAGState)
-   - Retrieve node
-   - Synthesize node (LLM generation)
-   - Cite node (add source references)
-3. ⏳ Create integration test - End-to-end RAG flow
-4. ⏳ Verify all Milestone 2 acceptance criteria
+### Phase 3: LangGraph Workflow ✅ (100% Complete)
+9. ✅ Implemented `src/rag/citations.py` - Citation formatting and tracking
+   - `build_citations()` - Extract from retrieval results
+   - `format_citations()` - Numbered/unnumbered formatting
+   - Deduplication by source+chunk_id
+10. ✅ Implemented `src/agent/rag_flow.py` - LangGraph workflow
+   - RAGState TypedDict definition
+   - Retrieve node (search vector store)
+   - Synthesize node (LLM generation with placeholder fallback)
+   - Cite node (build citations)
+   - RAGFlow class wrapper
+   - create_rag_graph() factory function
+11. ✅ Created integration tests - `tests/integration/test_rag_flow.py` (3 tests)
+   - End-to-end RAG pipeline test
+   - Citation verification
+   - Graph compilation test
+12. ✅ Created unit tests - `tests/unit/test_citations.py` (6 tests)
+   - Citation building and formatting
+   - Deduplication logic
+   - Edge cases (empty results)
+13. ✅ Verified all Milestone 2 acceptance criteria
+
+**Next Milestone: Milestone 3 - Authenticated API MVP**
 
 ---
 
 ## Milestone 3: Authenticated API MVP (Not Started)
 
 **Status: 0% Complete** ⏳
+
+**Deliverables:**
+- User registration/login endpoints
+- JWT authentication middleware
+- User-scoped document indexing
+- Authenticated chat endpoint with RAG
+- Multi-user data isolation
+- API documentation
 
 ---
 
