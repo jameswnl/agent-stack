@@ -1,9 +1,10 @@
 """Provider factory for creating LLM provider instances."""
 
-from typing import Dict, Any
+from typing import Any, Dict
+
+from .anthropic_provider import AnthropicProvider
 from .base import BaseLLMProvider
 from .openai_provider import OpenAIProvider
-from .anthropic_provider import AnthropicProvider
 
 
 class ProviderFactory:
@@ -32,10 +33,7 @@ class ProviderFactory:
 
         if provider_name not in cls._PROVIDERS:
             available = ", ".join(cls._PROVIDERS.keys())
-            raise ValueError(
-                f"Unsupported provider: {provider_name}. "
-                f"Available providers: {available}"
-            )
+            raise ValueError(f"Unsupported provider: {provider_name}. Available providers: {available}")
 
         provider_class = cls._PROVIDERS[provider_name]
         return provider_class(config)

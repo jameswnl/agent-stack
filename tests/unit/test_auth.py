@@ -1,9 +1,11 @@
 """Unit tests for authentication modules."""
 
-import pytest
 from datetime import timedelta
-from src.auth.password import hash_password, verify_password
+
+import pytest
+
 from src.auth.jwt import create_access_token, verify_token
+from src.auth.password import hash_password, verify_password
 
 
 @pytest.mark.unit

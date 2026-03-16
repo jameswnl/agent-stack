@@ -1,10 +1,11 @@
 """Unit tests for provider abstraction."""
 
 import pytest
-from src.providers.factory import ProviderFactory
-from src.providers.base import BaseLLMProvider
-from src.providers.openai_provider import OpenAIProvider
+
 from src.providers.anthropic_provider import AnthropicProvider
+from src.providers.base import BaseLLMProvider
+from src.providers.factory import ProviderFactory
+from src.providers.openai_provider import OpenAIProvider
 
 
 @pytest.mark.unit

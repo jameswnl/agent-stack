@@ -14,4 +14,3 @@ async def health() -> dict:
         "status": "healthy",
         "provider": settings.llm_provider,
     }
-

@@ -1,7 +1,7 @@
 """Research planner — classifies queries and selects tool strategy."""
 
 from enum import Enum
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -29,21 +29,46 @@ class ResearchPlan(BaseModel):
 
 
 # Keywords that strongly suggest web search is needed
-_WEB_KEYWORDS = frozenset([
-    "latest", "recent", "current", "today", "news", "update",
-    "2025", "2026", "2027",
-    "trending", "breaking",
-    "compare with", "versus",
-    "price", "stock", "weather",
-    "who is", "what happened",
-])
+_WEB_KEYWORDS = frozenset(
+    [
+        "latest",
+        "recent",
+        "current",
+        "today",
+        "news",
+        "update",
+        "2025",
+        "2026",
+        "2027",
+        "trending",
+        "breaking",
+        "compare with",
+        "versus",
+        "price",
+        "stock",
+        "weather",
+        "who is",
+        "what happened",
+    ]
+)
 
 # Keywords that suggest internal docs are sufficient
-_RAG_KEYWORDS = frozenset([
-    "our", "internal", "codebase", "documentation", "config",
-    "setting", "install", "setup", "troubleshoot",
-    "how do i", "how to", "getting started",
-])
+_RAG_KEYWORDS = frozenset(
+    [
+        "our",
+        "internal",
+        "codebase",
+        "documentation",
+        "config",
+        "setting",
+        "install",
+        "setup",
+        "troubleshoot",
+        "how do i",
+        "how to",
+        "getting started",
+    ]
+)
 
 
 def classify_query(

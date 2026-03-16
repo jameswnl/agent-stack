@@ -1,25 +1,14 @@
 """Unit tests for database operations."""
 
 import pytest
-from src.db.crud import (
-    create_user,
-    get_user_by_email,
-    get_user_by_id,
-    update_user,
-    delete_user
-)
-from src.db.models import User
+
+from src.db.crud import create_user, delete_user, get_user_by_email, get_user_by_id, update_user
 
 
 @pytest.mark.unit
 def test_create_user(db_session):
     """Test creating a user."""
-    user = create_user(
-        db=db_session,
-        email="newuser@example.com",
-        password="password123",
-        full_name="New User"
-    )
+    user = create_user(db=db_session, email="newuser@example.com", password="password123", full_name="New User")
 
     assert user.id is not None
     assert user.email == "newuser@example.com"
@@ -68,12 +57,7 @@ def test_get_user_by_id_not_found(db_session):
 @pytest.mark.unit
 def test_update_user(db_session, test_user):
     """Test updating user fields."""
-    updated_user = update_user(
-        db_session,
-        test_user.id,
-        full_name="Updated Name",
-        is_active=False
-    )
+    updated_user = update_user(db_session, test_user.id, full_name="Updated Name", is_active=False)
 
     assert updated_user is not None
     assert updated_user.id == test_user.id
@@ -121,5 +105,5 @@ def test_user_email_unique_constraint(db_session, test_user):
         create_user(
             db=db_session,
             email=test_user.email,  # Duplicate email
-            password="password123"
+            password="password123",
         )

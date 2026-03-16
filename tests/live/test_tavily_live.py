@@ -14,7 +14,6 @@ import pytest
 from src.tools.base import SearchResult
 from src.tools.web_search import TavilySearchTool
 
-
 pytestmark = pytest.mark.live
 
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")

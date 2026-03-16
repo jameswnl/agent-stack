@@ -1,20 +1,15 @@
 """Text chunking with metadata preservation."""
 
 import hashlib
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
-from .models import Document, Chunk
+from .models import Chunk, Document
 
 
 class TextChunker:
     """Splits documents into chunks with overlap."""
 
-    def __init__(
-        self,
-        chunk_size: int = 1000,
-        chunk_overlap: int = 200,
-        separator: str = "\n\n"
-    ):
+    def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 200, separator: str = "\n\n"):
         """Initialize text chunker.
 
         Args:
@@ -59,18 +54,9 @@ class TextChunker:
         Returns:
             List of chunks from the document
         """
-        return self.chunk_text(
-            text=document.content,
-            metadata=document.metadata,
-            source=document.source
-        )
+        return self.chunk_text(text=document.content, metadata=document.metadata, source=document.source)
 
-    def chunk_text(
-        self,
-        text: str,
-        metadata: Dict[str, Any] | None = None,
-        source: str | None = None
-    ) -> List[Chunk]:
+    def chunk_text(self, text: str, metadata: Dict[str, Any] | None = None, source: str | None = None) -> List[Chunk]:
         """Chunk raw text into smaller pieces.
 
         Args:
@@ -103,37 +89,22 @@ class TextChunker:
                 # Add current chunk if any
                 if current_chunk:
                     chunk_text = "".join(current_chunk)
-                    chunks.append(self._create_chunk(
-                        chunk_text,
-                        len(chunks),
-                        metadata,
-                        source
-                    ))
+                    chunks.append(self._create_chunk(chunk_text, len(chunks), metadata, source))
                     current_chunk = []
                     current_size = 0
 
                 # Split large text by character count
                 for j in range(0, split_size, self.chunk_size - self.chunk_overlap):
-                    chunk_text = split[j:j + self.chunk_size]
+                    chunk_text = split[j : j + self.chunk_size]
                     if chunk_text.strip():
-                        chunks.append(self._create_chunk(
-                            chunk_text,
-                            len(chunks),
-                            metadata,
-                            source
-                        ))
+                        chunks.append(self._create_chunk(chunk_text, len(chunks), metadata, source))
                 continue
 
             # Check if adding this split would exceed chunk_size
             if current_size + split_size > self.chunk_size and current_chunk:
                 # Create chunk from current content
                 chunk_text = "".join(current_chunk)
-                chunks.append(self._create_chunk(
-                    chunk_text,
-                    len(chunks),
-                    metadata,
-                    source
-                ))
+                chunks.append(self._create_chunk(chunk_text, len(chunks), metadata, source))
 
                 # Start new chunk with overlap
                 overlap_size = 0
@@ -157,12 +128,7 @@ class TextChunker:
         # Add final chunk
         if current_chunk:
             chunk_text = "".join(current_chunk)
-            chunks.append(self._create_chunk(
-                chunk_text,
-                len(chunks),
-                metadata,
-                source
-            ))
+            chunks.append(self._create_chunk(chunk_text, len(chunks), metadata, source))
 
         return chunks
 
@@ -189,13 +155,7 @@ class TextChunker:
         else:
             return [text]
 
-    def _create_chunk(
-        self,
-        text: str,
-        index: int,
-        base_metadata: Dict[str, Any],
-        source: str
-    ) -> Chunk:
+    def _create_chunk(self, text: str, index: int, base_metadata: Dict[str, Any], source: str) -> Chunk:
         """Create a chunk with metadata.
 
         Args:
@@ -218,11 +178,7 @@ class TextChunker:
             "source": source,
         }
 
-        return Chunk(
-            content=text.strip(),
-            metadata=metadata,
-            chunk_id=chunk_id
-        )
+        return Chunk(content=text.strip(), metadata=metadata, chunk_id=chunk_id)
 
     def _generate_chunk_id(self, source: str, index: int) -> str:
         """Generate unique chunk ID.

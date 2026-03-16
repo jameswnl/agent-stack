@@ -1,9 +1,10 @@
 """Unit tests for retriever."""
 
 import pytest
+
+from src.rag.models import Chunk
 from src.rag.retriever import Retriever
 from src.rag.store import VectorStoreManager
-from src.rag.models import Chunk
 
 
 @pytest.fixture
@@ -15,18 +16,14 @@ def vector_store(mock_embeddings):
         Chunk(
             content="Python is a versatile programming language",
             metadata={"source": "python_intro.md"},
-            chunk_id="chunk1"
+            chunk_id="chunk1",
         ),
         Chunk(
             content="FastAPI is great for building APIs with Python",
             metadata={"source": "fastapi_guide.md"},
-            chunk_id="chunk2"
+            chunk_id="chunk2",
         ),
-        Chunk(
-            content="Machine learning with TensorFlow",
-            metadata={"source": "ml_basics.md"},
-            chunk_id="chunk3"
-        ),
+        Chunk(content="Machine learning with TensorFlow", metadata={"source": "ml_basics.md"}, chunk_id="chunk3"),
     ]
 
     store.index_documents(chunks)
@@ -36,11 +33,7 @@ def vector_store(mock_embeddings):
 @pytest.fixture
 def retriever(vector_store):
     """Create retriever instance."""
-    return Retriever(
-        vector_store=vector_store,
-        default_k=5,
-        relevance_threshold=0.5
-    )
+    return Retriever(vector_store=vector_store, default_k=5, relevance_threshold=0.5)
 
 
 @pytest.mark.unit
@@ -57,8 +50,8 @@ def test_retrieve(retriever):
     results = retriever.retrieve("Python programming")
 
     assert isinstance(results, list)
-    assert all(hasattr(r, 'chunk') for r in results)
-    assert all(hasattr(r, 'score') for r in results)
+    assert all(hasattr(r, "chunk") for r in results)
+    assert all(hasattr(r, "score") for r in results)
 
 
 @pytest.mark.unit
@@ -106,11 +99,7 @@ def test_retrieve_with_context(retriever):
 @pytest.mark.unit
 def test_retrieve_with_context_custom_separator(retriever):
     """Test context retrieval with custom separator."""
-    context = retriever.retrieve_with_context(
-        "Python",
-        k=2,
-        separator="\n---\n"
-    )
+    context = retriever.retrieve_with_context("Python", k=2, separator="\n---\n")
 
     if "\n---\n" in context:
         # If multiple chunks, separator should be present
@@ -175,9 +164,7 @@ def test_retrieve_no_results_above_threshold(mock_embeddings):
     """Test retrieval when no results meet threshold."""
     store = VectorStoreManager(embeddings=mock_embeddings, dimension=128)
 
-    chunks = [
-        Chunk(content="Test content", metadata={"source": "test.md"}, chunk_id="c1")
-    ]
+    chunks = [Chunk(content="Test content", metadata={"source": "test.md"}, chunk_id="c1")]
     store.index_documents(chunks)
 
     retriever = Retriever(vector_store=store, relevance_threshold=0.99)

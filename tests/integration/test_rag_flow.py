@@ -1,15 +1,15 @@
 """Integration tests for RAG flow: load -> index -> query -> cited answer."""
 
-import pytest
 from pathlib import Path
 
-from src.rag.loader import DocumentLoader
-from src.rag.chunker import TextChunker
-from src.rag.store import VectorStoreManager
-from src.rag.retriever import Retriever
-from src.rag.citations import format_citations
-from src.agent.rag_flow import RAGFlow, create_rag_graph, RAGState
+import pytest
 
+from src.agent.rag_flow import RAGFlow, create_rag_graph
+from src.rag.chunker import TextChunker
+from src.rag.citations import format_citations
+from src.rag.loader import DocumentLoader
+from src.rag.retriever import Retriever
+from src.rag.store import VectorStoreManager
 
 # Fixtures directory relative to project root
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures" / "documents"

@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.rag.models import Chunk, Citation, RetrievalResult
+from src.rag.models import Chunk, RetrievalResult
 from src.research.citations import build_mixed_citations
 from src.tools.base import SearchResult
 

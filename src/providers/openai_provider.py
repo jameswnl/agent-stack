@@ -1,9 +1,8 @@
 """OpenAI provider implementation."""
 
-from typing import Any, Dict
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_core.language_models import BaseChatModel
 from langchain_core.embeddings import Embeddings
+from langchain_core.language_models import BaseChatModel
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from .base import BaseLLMProvider
 
@@ -34,7 +33,7 @@ class OpenAIProvider(BaseLLMProvider):
             api_key=api_key,
             model=model_name,
             temperature=temperature,
-            **{k: v for k, v in kwargs.items() if k not in ["model", "temperature"]}
+            **{k: v for k, v in kwargs.items() if k not in ["model", "temperature"]},
         )
 
     def get_embeddings(self, **kwargs) -> Embeddings:
@@ -52,8 +51,4 @@ class OpenAIProvider(BaseLLMProvider):
 
         model = kwargs.get("model", self.DEFAULT_EMBEDDINGS_MODEL)
 
-        return OpenAIEmbeddings(
-            api_key=api_key,
-            model=model,
-            **{k: v for k, v in kwargs.items() if k != "model"}
-        )
+        return OpenAIEmbeddings(api_key=api_key, model=model, **{k: v for k, v in kwargs.items() if k != "model"})

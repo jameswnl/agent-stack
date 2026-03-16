@@ -3,9 +3,10 @@
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+
+from src.api import services
 from src.api.dependencies import get_current_user
 from src.api.models import IndexDocumentsRequest, IndexDocumentsResponse
-from src.api import services
 from src.db.models import User
 from src.rag.chunker import TextChunker
 from src.rag.loader import DocumentLoader

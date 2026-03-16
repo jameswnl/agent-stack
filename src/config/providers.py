@@ -1,9 +1,10 @@
 """Provider configuration helpers."""
 
-from typing import Dict, Any
-from .settings import settings
-from ..providers.factory import ProviderFactory
+from typing import Any, Dict
+
 from ..providers.base import BaseLLMProvider
+from ..providers.factory import ProviderFactory
+from .settings import settings
 
 
 def get_provider_config(provider_name: str | None = None) -> Dict[str, Any]:
@@ -31,18 +32,14 @@ def get_provider_config(provider_name: str | None = None) -> Dict[str, Any]:
         if not settings.anthropic_api_key:
             raise ValueError("ANTHROPIC_API_KEY is required for Anthropic provider")
         if not settings.openai_api_key:
-            raise ValueError(
-                "OPENAI_API_KEY is required for embeddings when using Anthropic provider"
-            )
+            raise ValueError("OPENAI_API_KEY is required for embeddings when using Anthropic provider")
         config["api_key"] = settings.anthropic_api_key
         # Anthropic uses OpenAI for embeddings
         config["openai_api_key"] = settings.openai_api_key
 
     else:
         available = ", ".join(ProviderFactory.get_available_providers())
-        raise ValueError(
-            f"Unknown provider: {provider_name}. Available providers: {available}"
-        )
+        raise ValueError(f"Unknown provider: {provider_name}. Available providers: {available}")
 
     return config
 
