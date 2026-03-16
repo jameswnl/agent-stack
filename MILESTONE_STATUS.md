@@ -1,8 +1,8 @@
 # Milestone Status
 
-Last Updated: 2026-03-15
+Last Updated: 2026-03-16
 
-## Current Milestone: Milestone 2 - RAG MVP
+## Current Milestone: Milestone 3 - Authenticated API MVP
 
 **Status: 100% Complete** ✅
 
@@ -148,17 +148,91 @@ Last Updated: 2026-03-15
 
 ---
 
-## Milestone 3: Authenticated API MVP (Not Started)
+## Milestone 3: Authenticated API MVP (Complete)
 
-**Status: 0% Complete** ⏳
+**Status: 100% Complete** ✅
 
 **Deliverables:**
-- User registration/login endpoints
-- JWT authentication middleware
-- User-scoped document indexing
-- Authenticated chat endpoint with RAG
-- Multi-user data isolation
-- API documentation
+- ✅ User registration/login endpoints
+- ✅ JWT authentication middleware
+- ✅ User-scoped document indexing
+- ✅ Authenticated chat endpoint with RAG
+- ✅ Multi-user data isolation
+- ✅ API documentation (FastAPI auto-generated)
+
+**Acceptance Criteria:**
+- ✅ Unauthenticated requests are rejected
+- ✅ User A cannot retrieve User B content
+- ✅ API integration tests pass with ephemeral test database
+- ✅ Conversation persistence deferred (stateless MVP per Decision 1)
+
+**Completed Work:**
+
+### API Layer ✅
+1. ✅ Created `src/api/dependencies.py` - JWT authentication dependency
+   - HTTPBearer token extraction
+   - JWT verification via `verify_token`
+   - Active user validation
+2. ✅ Created `src/api/models.py` - Request/response models
+   - RegisterRequest, LoginRequest, TokenResponse, UserResponse
+   - IndexDocumentsRequest/Response
+   - ChatRequest/Response with CitationResponse
+3. ✅ Created `src/api/routes/auth.py` - Authentication endpoints
+   - POST /api/v1/auth/register (201 on success)
+   - POST /api/v1/auth/login
+   - GET /api/v1/auth/me (protected)
+4. ✅ Created `src/api/routes/documents.py` - Document indexing
+   - POST /api/v1/documents/index (protected)
+   - User-scoped FAISS store persistence
+   - **Security: Path traversal protection** via `resolve_allowed_source_path`
+5. ✅ Created `src/api/routes/chat.py` - Authenticated RAG chat
+   - POST /api/v1/chat (protected)
+   - User-scoped vector store loading
+   - Graceful fallback when LLM unavailable
+6. ✅ Created `src/api/routes/health.py` - Health check
+   - GET /health (public)
+7. ✅ Created `src/api/services.py` - Shared API helpers
+   - `get_embeddings()`, `get_chat_model()`
+   - `get_user_store_path()` - User isolation
+   - `get_embedding_dimension()` - DRY helper
+   - `resolve_allowed_source_path()` - **Security validation**
+
+### Configuration & Security ✅
+8. ✅ Updated `src/config/settings.py` - Configurable directories
+   - `user_data_dir` (default: "data/users")
+   - `ingest_base_dir` (default: "data/uploads")
+9. ✅ Updated `src/main.py` - Application initialization
+   - Router registration (health, auth, documents, chat)
+   - Directory creation with absolute path resolution
+   - `app.state.user_data_dir` and `app.state.ingest_base_dir`
+
+### Testing ✅
+10. ✅ Created `tests/integration/test_api_auth.py` - Comprehensive API tests (5 tests)
+    - `test_register_login_and_me` - Auth flow
+    - `test_protected_routes_require_auth` - Authorization enforcement
+    - `test_index_and_chat_flow` - Index → query workflow
+    - `test_user_document_isolation` - **Critical: User data isolation**
+    - `test_index_rejects_source_path_outside_allowed_base` - **Security test**
+11. ✅ Extracted `MockEmbeddings` to `tests/conftest.py` - DRY improvement
+12. ✅ Updated existing tests to use shared `MockEmbeddings` fixture
+
+**Security Improvements:**
+- ✅ Path traversal vulnerability fixed (PR review critical issue)
+- ✅ Server-side path validation with `resolve_allowed_source_path()`
+- ✅ Configurable ingest base directory with absolute path resolution
+- ✅ Integration test verifies rejection of paths outside allowed base
+
+**Test Results:**
+- Total tests: 99 passing (5 new integration tests)
+  - Milestone 1: 31 tests
+  - Milestone 2: 63 tests
+  - Milestone 3: 5 integration tests
+- All tests passing ✅
+- No test failures
+
+**PR:** #3 - Merged 2026-03-16
+
+**Next Milestone: Milestone 4 - Research Extensions**
 
 ---
 

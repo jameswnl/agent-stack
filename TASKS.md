@@ -1,64 +1,8 @@
 # Task List and Progress
 
-Last Updated: 2026-03-15
+Last Updated: 2026-03-16
 
 ## Active Tasks
-
-### Task #3: Milestone 3 - Authenticated API MVP ⏳ 0%
-
-**Status:** PENDING
-**Owner:** Implementation team
-**Milestone:** Milestone 2
-
-**Description:** Implement document loading, chunking, FAISS indexing, retrieval, and LangGraph workflow for RAG.
-
-**Progress:**
-- ✅ Document loader (Markdown/Text) - `src/rag/loader.py`
-- ✅ Chunking strategy with metadata - `src/rag/chunker.py`
-- ✅ Data models - `src/rag/models.py`
-- ✅ FAISS index manager - `src/rag/store.py`
-- ✅ Retrieval tool with relevance threshold - `src/rag/retriever.py`
-- ✅ Unit tests for Phase 1 & 2 - 54 tests passing
-- ⏳ Citation tracking - `src/rag/citations.py`
-- ⏳ LangGraph state definition
-- ⏳ LangGraph nodes (retrieve, synthesize, cite)
-- ⏳ Integration test: index -> query -> cited response
-
-**Completed Subtasks (60%):**
-- Phase 1: Document Processing (100%)
-- Phase 2: Vector Store (100%)
-- Phase 3: LangGraph Workflow (0%)
-- Phase 4: Integration Testing (0%)
-
-**Blockers:**
-- None (all previous blockers resolved in Milestone 1)
-
-**Next Steps:**
-1. Implement `src/rag/citations.py` - Citation tracker
-2. Implement `src/agent/rag_flow.py` - LangGraph workflow
-3. Create integration test with mocked LLM
-4. Verify Milestone 2 acceptance criteria
-
----
-
-### Task #3: Milestone 3 - Authenticated API MVP ⏳ 0%
-
-**Status:** PENDING
-**Owner:** Unassigned
-**Milestone:** Milestone 3
-**Blocked By:** Task #2
-
-**Description:** Implement FastAPI server with JWT authentication, user registration/login, user-scoped document indexing, and authenticated chat endpoint.
-
-**Subtasks:**
-- [ ] FastAPI server setup (server.py)
-- [ ] Health endpoint
-- [ ] Auth endpoints (register, login)
-- [ ] Auth middleware and dependencies
-- [ ] User-scoped document indexing endpoint
-- [ ] Authenticated chat endpoint
-- [ ] Integration tests with ephemeral database
-- [ ] Test user data isolation
 
 ---
 
@@ -124,6 +68,33 @@ Completed full RAG system with document loading, FAISS indexing, retrieval, and 
 
 ---
 
+### Task #3: Milestone 3 - Authenticated API MVP ✅
+
+**Status:** COMPLETED
+**Completed:** 2026-03-16
+**Milestone:** Milestone 3
+
+Completed authenticated API layer with user registration/login, JWT authentication, user-scoped document indexing, and authenticated RAG chat endpoint.
+
+**Deliverables:**
+- ✅ Authentication endpoints (register, login, me)
+- ✅ JWT authentication dependency
+- ✅ User-scoped document indexing with path security
+- ✅ Authenticated RAG chat endpoint
+- ✅ Multi-user data isolation
+- ✅ 5 integration tests (auth flow, protected routes, index+chat, user isolation, security)
+
+**Security:**
+- ✅ Path traversal vulnerability fixed
+- ✅ Server-side path validation with `resolve_allowed_source_path()`
+- ✅ Configurable ingest base directory
+
+**Test Results:** 99 total tests passing, 5 new integration tests
+
+**PR:** #3 - Merged 2026-03-16
+
+---
+
 ### Task #1: Milestone 1 - Foundation and Contracts ✅
 
 **Status:** COMPLETED
@@ -166,19 +137,19 @@ Created .env.example with all environment variables and configuration templates.
 ## Task Metadata
 
 **Total Tasks:** 7
-**Completed:** 4 (Milestones 1 & 2, pyproject.toml, .env.example)
+**Completed:** 5 (Milestones 1, 2 & 3, pyproject.toml, .env.example)
 **In Progress:** 0
-**Pending:** 3 (Milestones 3, 4, 5)
+**Pending:** 2 (Milestones 4, 5)
 **Blocked:** 0
 
 **Milestone Progress:**
 - Milestone 1: 100% complete ✅
 - Milestone 2: 100% complete ✅
-- Milestone 3: 0% (not started)
+- Milestone 3: 100% complete ✅
 - Milestone 4: 0% (not started)
 - Milestone 5: 0% (not started)
 
-**Overall Project Progress:** ~40% (2 of 5 milestones complete)
+**Overall Project Progress:** ~60% (3 of 5 milestones complete)
 
 ---
 

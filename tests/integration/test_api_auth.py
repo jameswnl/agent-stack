@@ -134,7 +134,7 @@ def test_user_document_isolation(api_client: TestClient, sample_documents_dir, t
     user2_headers = _auth_headers(api_client, email="user2@example.com")
 
     user1_docs = app.state.ingest_base_dir / "user1_docs"
-    user1_docs.mkdir()
+    user1_docs.mkdir(exist_ok=True)
     (user1_docs / "private.md").write_text("# Private\n\nSecret token value alpha.")
 
     index_response = api_client.post(
