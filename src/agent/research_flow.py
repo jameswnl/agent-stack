@@ -179,27 +179,33 @@ def create_research_graph(
     Returns:
         Compiled LangGraph.
     """
+    plan_node_name = "plan_step"
+    retrieve_node_name = "retrieve_step"
+    web_search_node_name = "web_search_step"
+    synthesize_node_name = "synthesize_step"
+    cite_node_name = "cite_step"
+
     builder = StateGraph(ResearchState)
 
     builder.add_node(
-        "plan",
+        plan_node_name,
         _build_plan_node(
             has_rag_index=retriever is not None,
             has_web_search=search_tool is not None,
         ),
     )
-    builder.add_node("retrieve", _build_retrieve_node(retriever))
-    builder.add_node("web_search", _build_web_search_node(search_tool))
-    builder.add_node("synthesize", _build_synthesize_node(llm))
-    builder.add_node("cite", _cite_node)
+    builder.add_node(retrieve_node_name, _build_retrieve_node(retriever))
+    builder.add_node(web_search_node_name, _build_web_search_node(search_tool))
+    builder.add_node(synthesize_node_name, _build_synthesize_node(llm))
+    builder.add_node(cite_node_name, _cite_node)
 
-    builder.add_edge(START, "plan")
-    builder.add_edge("plan", "retrieve")
-    builder.add_edge("plan", "web_search")
-    builder.add_edge("retrieve", "synthesize")
-    builder.add_edge("web_search", "synthesize")
-    builder.add_edge("synthesize", "cite")
-    builder.add_edge("cite", END)
+    builder.add_edge(START, plan_node_name)
+    builder.add_edge(plan_node_name, retrieve_node_name)
+    builder.add_edge(plan_node_name, web_search_node_name)
+    builder.add_edge(retrieve_node_name, synthesize_node_name)
+    builder.add_edge(web_search_node_name, synthesize_node_name)
+    builder.add_edge(synthesize_node_name, cite_node_name)
+    builder.add_edge(cite_node_name, END)
 
     return builder.compile()
 
