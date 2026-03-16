@@ -1,36 +1,15 @@
 """Integration tests for auth and authenticated API flows."""
 
-from pathlib import Path
-
-import numpy as np
 import pytest
 from fastapi.testclient import TestClient
-from langchain_core.embeddings import Embeddings
 from sqlalchemy.orm import sessionmaker
 
 from src.db.database import get_db
 from src.main import app
 
 
-class MockEmbeddings(Embeddings):
-    """Deterministic mock embeddings for API tests."""
-
-    def __init__(self, dimension: int = 128):
-        self.dimension = dimension
-
-    def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        return [self._embed(t) for t in texts]
-
-    def embed_query(self, text: str) -> list[float]:
-        return self._embed(text)
-
-    def _embed(self, text: str) -> list[float]:
-        np.random.seed(hash(text) % (2**32))
-        return np.random.rand(self.dimension).tolist()
-
-
 @pytest.fixture
-def api_client(test_engine, tmp_path, monkeypatch):
+def api_client(test_engine, tmp_path, monkeypatch, mock_embeddings):
     """Create a TestClient with an isolated DB and user data directory."""
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
@@ -43,11 +22,13 @@ def api_client(test_engine, tmp_path, monkeypatch):
 
     from src.api import services
 
-    monkeypatch.setattr(services, "get_embeddings", lambda: MockEmbeddings())
+    monkeypatch.setattr(services, "get_embeddings", lambda: mock_embeddings)
     monkeypatch.setattr(services, "get_chat_model", lambda: None)
     app.dependency_overrides[get_db] = override_get_db
     app.state.user_data_dir = tmp_path / "users"
     app.state.user_data_dir.mkdir(parents=True, exist_ok=True)
+    app.state.ingest_base_dir = tmp_path / "ingest"
+    app.state.ingest_base_dir.mkdir(parents=True, exist_ok=True)
 
     with TestClient(app) as client:
         yield client
@@ -118,11 +99,15 @@ def test_protected_routes_require_auth(api_client: TestClient, sample_documents_
 def test_index_and_chat_flow(api_client: TestClient, sample_documents_dir):
     """Index user documents and query them through the authenticated chat API."""
     headers = _auth_headers(api_client)
+    ingest_path = app.state.ingest_base_dir / "shared_docs"
+    ingest_path.mkdir(parents=True, exist_ok=True)
+    for source_file in sample_documents_dir.iterdir():
+        (ingest_path / source_file.name).write_text(source_file.read_text())
 
     index_response = api_client.post(
         "/api/v1/documents/index",
         json={
-            "source_path": str(sample_documents_dir),
+            "source_path": str(ingest_path),
             "chunk_size": 120,
             "chunk_overlap": 20,
         },
@@ -148,7 +133,7 @@ def test_user_document_isolation(api_client: TestClient, sample_documents_dir, t
     user1_headers = _auth_headers(api_client, email="user1@example.com")
     user2_headers = _auth_headers(api_client, email="user2@example.com")
 
-    user1_docs = tmp_path / "user1_docs"
+    user1_docs = app.state.ingest_base_dir / "user1_docs"
     user1_docs.mkdir()
     (user1_docs / "private.md").write_text("# Private\n\nSecret token value alpha.")
 
@@ -173,3 +158,21 @@ def test_user_document_isolation(api_client: TestClient, sample_documents_dir, t
     )
     assert visible_chat.status_code == 200
     assert "Secret token value alpha" in visible_chat.json()["answer"]
+
+
+@pytest.mark.integration
+def test_index_rejects_source_path_outside_allowed_base(api_client: TestClient, tmp_path):
+    """User-supplied source paths outside the ingest root are rejected."""
+    headers = _auth_headers(api_client, email="outside@example.com")
+    outside_dir = tmp_path / "outside"
+    outside_dir.mkdir()
+    (outside_dir / "secret.md").write_text("secret")
+
+    response = api_client.post(
+        "/api/v1/documents/index",
+        json={"source_path": str(outside_dir)},
+        headers=headers,
+    )
+
+    assert response.status_code == 400
+    assert "outside allowed ingestion directory" in response.json()["detail"]

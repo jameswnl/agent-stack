@@ -1,5 +1,6 @@
 """Authenticated chat endpoints."""
 
+import logging
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -14,17 +15,14 @@ from src.rag.retriever import Retriever
 from src.rag.store import VectorStoreManager
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
-
-
-def _embedding_dimension(embeddings) -> int:
-    return int(getattr(embeddings, "dimension", 1536))
+logger = logging.getLogger(__name__)
 
 
 def _load_user_store(base_dir: Path, user_id: int) -> VectorStoreManager:
     embeddings = services.get_embeddings()
     store = VectorStoreManager(
         embeddings=embeddings,
-        dimension=_embedding_dimension(embeddings),
+        dimension=services.get_embedding_dimension(embeddings),
     )
     store_path = services.get_user_store_path(base_dir, user_id)
     store.load(str(store_path))
@@ -34,7 +32,8 @@ def _load_user_store(base_dir: Path, user_id: int) -> VectorStoreManager:
 def _maybe_get_chat_model() -> BaseChatModel | None:
     try:
         return services.get_chat_model()
-    except ValueError:
+    except ValueError as exc:
+        logger.info("Chat model unavailable, using placeholder response: %s", exc)
         return None
 
 

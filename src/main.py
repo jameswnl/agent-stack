@@ -15,8 +15,10 @@ async def lifespan(app: FastAPI):
     """Application lifespan handler for startup/shutdown."""
     # Startup: Initialize database
     init_db()
-    app.state.user_data_dir = Path("data/users")
+    app.state.user_data_dir = Path(settings.user_data_dir).resolve()
     app.state.user_data_dir.mkdir(parents=True, exist_ok=True)
+    app.state.ingest_base_dir = Path(settings.ingest_base_dir).resolve()
+    app.state.ingest_base_dir.mkdir(parents=True, exist_ok=True)
     yield
     # Shutdown: cleanup if needed
     pass

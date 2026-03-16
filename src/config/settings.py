@@ -49,6 +49,11 @@ class Settings(BaseSettings):
     # API Server
     api_host: str = Field(default="0.0.0.0", description="API server host")
     api_port: int = Field(default=8000, description="API server port")
+    user_data_dir: str = Field(default="data/users", description="Persisted per-user data directory")
+    ingest_base_dir: str = Field(
+        default="data/uploads",
+        description="Allowed base directory for server-side document ingestion",
+    )
 
     # LangSmith (Optional)
     langchain_tracing_v2: bool = Field(default=False, description="Enable LangSmith tracing")

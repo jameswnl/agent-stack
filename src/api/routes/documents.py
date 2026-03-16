@@ -14,10 +14,6 @@ from src.rag.store import VectorStoreManager
 router = APIRouter(prefix="/api/v1/documents", tags=["documents"])
 
 
-def _embedding_dimension(embeddings) -> int:
-    return int(getattr(embeddings, "dimension", 1536))
-
-
 @router.post("/index", response_model=IndexDocumentsResponse)
 def index_documents(
     request: IndexDocumentsRequest,
@@ -25,9 +21,20 @@ def index_documents(
     current_user: User = Depends(get_current_user),
 ) -> IndexDocumentsResponse:
     """Index documents into a user-scoped vector store."""
+    try:
+        source_path = services.resolve_allowed_source_path(
+            request.source_path,
+            Path(fastapi_request.app.state.ingest_base_dir),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
     loader = DocumentLoader()
     documents = loader.load_directory(
-        request.source_path,
+        str(source_path),
         recursive=request.recursive,
     )
     if not documents:
@@ -50,7 +57,7 @@ def index_documents(
     embeddings = services.get_embeddings()
     store = VectorStoreManager(
         embeddings=embeddings,
-        dimension=_embedding_dimension(embeddings),
+        dimension=services.get_embedding_dimension(embeddings),
     )
     store.index_documents(chunks)
 

@@ -1,16 +1,36 @@
 """Pytest fixtures and configuration."""
 
-import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from typing import Generator
 import os
 import tempfile
+from typing import Generator
+
+import numpy as np
+import pytest
+from langchain_core.embeddings import Embeddings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from src.db.database import Base
 from src.db.models import User
 from src.db.crud import create_user
 from src.auth.jwt import create_access_token
+
+
+class MockEmbeddings(Embeddings):
+    """Deterministic mock embeddings for tests."""
+
+    def __init__(self, dimension: int = 128):
+        self.dimension = dimension
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return [self._embed(text) for text in texts]
+
+    def embed_query(self, text: str) -> list[float]:
+        return self._embed(text)
+
+    def _embed(self, text: str) -> list[float]:
+        np.random.seed(hash(text) % (2**32))
+        return np.random.rand(self.dimension).tolist()
 
 
 @pytest.fixture(scope="session")
@@ -81,6 +101,12 @@ def test_user2_token(test_user2):
     """Create a JWT token for the second test user."""
     token = create_access_token(data={"sub": test_user2.email})
     return token
+
+
+@pytest.fixture
+def mock_embeddings():
+    """Create deterministic mock embeddings."""
+    return MockEmbeddings(dimension=128)
 
 
 @pytest.fixture
