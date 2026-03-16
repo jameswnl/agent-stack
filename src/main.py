@@ -1,7 +1,11 @@
 """FastAPI application entry point."""
 
-from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from pathlib import Path
+
+from fastapi import FastAPI
+
+from .api.routes import auth, chat, documents, health
 from .config.settings import settings
 from .db.database import init_db
 
@@ -11,6 +15,10 @@ async def lifespan(app: FastAPI):
     """Application lifespan handler for startup/shutdown."""
     # Startup: Initialize database
     init_db()
+    app.state.user_data_dir = Path(settings.user_data_dir).resolve()
+    app.state.user_data_dir.mkdir(parents=True, exist_ok=True)
+    app.state.ingest_base_dir = Path(settings.ingest_base_dir).resolve()
+    app.state.ingest_base_dir.mkdir(parents=True, exist_ok=True)
     yield
     # Shutdown: cleanup if needed
     pass
@@ -25,6 +33,12 @@ app = FastAPI(
 )
 
 
+app.include_router(health.router)
+app.include_router(auth.router)
+app.include_router(documents.router)
+app.include_router(chat.router)
+
+
 @app.get("/")
 async def root():
     """Root endpoint."""
@@ -33,17 +47,6 @@ async def root():
         "version": "0.1.0",
         "environment": settings.app_env
     }
-
-
-@app.get("/health")
-async def health():
-    """Health check endpoint."""
-    return {
-        "status": "healthy",
-        "provider": settings.llm_provider
-    }
-
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(

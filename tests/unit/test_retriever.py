@@ -4,13 +4,6 @@ import pytest
 from src.rag.retriever import Retriever
 from src.rag.store import VectorStoreManager
 from src.rag.models import Chunk
-from tests.unit.test_store import MockEmbeddings
-
-
-@pytest.fixture
-def mock_embeddings():
-    """Create mock embeddings."""
-    return MockEmbeddings(dimension=128)
 
 
 @pytest.fixture
@@ -125,10 +118,9 @@ def test_retrieve_with_context_custom_separator(retriever):
 
 
 @pytest.mark.unit
-def test_retrieve_with_context_empty_results():
+def test_retrieve_with_context_empty_results(mock_embeddings):
     """Test context retrieval with no results."""
     # Create empty vector store
-    mock_embeddings = MockEmbeddings(dimension=128)
     empty_store = VectorStoreManager(embeddings=mock_embeddings, dimension=128)
     retriever = Retriever(vector_store=empty_store)
 
@@ -179,9 +171,8 @@ def test_default_threshold_used_when_none(retriever):
 
 
 @pytest.mark.unit
-def test_retrieve_no_results_above_threshold():
+def test_retrieve_no_results_above_threshold(mock_embeddings):
     """Test retrieval when no results meet threshold."""
-    mock_embeddings = MockEmbeddings(dimension=128)
     store = VectorStoreManager(embeddings=mock_embeddings, dimension=128)
 
     chunks = [
@@ -209,9 +200,8 @@ def test_retrieve_chunks_preserves_metadata(retriever):
 
 
 @pytest.mark.unit
-def test_context_includes_all_chunks():
+def test_context_includes_all_chunks(mock_embeddings):
     """Test that context string includes all retrieved chunks."""
-    mock_embeddings = MockEmbeddings(dimension=128)
     store = VectorStoreManager(embeddings=mock_embeddings, dimension=128)
 
     chunks = [

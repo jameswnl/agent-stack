@@ -1,10 +1,7 @@
 """Integration tests for RAG flow: load -> index -> query -> cited answer."""
 
 import pytest
-import numpy as np
 from pathlib import Path
-
-from langchain_core.embeddings import Embeddings
 
 from src.rag.loader import DocumentLoader
 from src.rag.chunker import TextChunker
@@ -16,28 +13,6 @@ from src.agent.rag_flow import RAGFlow, create_rag_graph, RAGState
 
 # Fixtures directory relative to project root
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures" / "documents"
-
-
-class MockEmbeddings(Embeddings):
-    """Deterministic mock embeddings for integration tests."""
-
-    def __init__(self, dimension: int = 128):
-        self.dimension = dimension
-
-    def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        return [self._embed(t) for t in texts]
-
-    def embed_query(self, text: str) -> list[float]:
-        return self._embed(text)
-
-    def _embed(self, text: str) -> list[float]:
-        np.random.seed(hash(text) % (2**32))
-        return np.random.rand(self.dimension).tolist()
-
-
-@pytest.fixture
-def mock_embeddings():
-    return MockEmbeddings(dimension=128)
 
 
 @pytest.fixture

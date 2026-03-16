@@ -1,42 +1,9 @@
 """Unit tests for vector store manager."""
 
 import pytest
-import tempfile
-import shutil
-from pathlib import Path
-import numpy as np
-from langchain_core.embeddings import Embeddings
 
 from src.rag.store import VectorStoreManager
 from src.rag.models import Chunk
-
-
-class MockEmbeddings(Embeddings):
-    """Mock embeddings for testing."""
-
-    def __init__(self, dimension: int = 1536):
-        self.dimension = dimension
-
-    def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        """Generate random embeddings for documents."""
-        return [self._embed(text) for text in texts]
-
-    def embed_query(self, text: str) -> list[float]:
-        """Generate random embedding for query."""
-        return self._embed(text)
-
-    def _embed(self, text: str) -> list[float]:
-        """Generate deterministic embedding based on text hash."""
-        # Use text hash for reproducibility
-        np.random.seed(hash(text) % (2**32))
-        embedding = np.random.rand(self.dimension).tolist()
-        return embedding
-
-
-@pytest.fixture
-def mock_embeddings():
-    """Create mock embeddings."""
-    return MockEmbeddings(dimension=128)  # Smaller dimension for faster tests
 
 
 @pytest.fixture
