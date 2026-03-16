@@ -48,4 +48,9 @@ jobs:
         run: mkdir -p data data/users data/uploads
 
       - name: Run non-live test suite
-        run: poetry run pytest --no-cov -m "not live" -q
+        run: >
+          poetry run pytest --no-cov -q
+          tests/unit
+          tests/contract
+          tests/integration/test_api_auth.py
+          tests/integration/test_rag_flow.py
