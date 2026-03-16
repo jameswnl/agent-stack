@@ -5,6 +5,7 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -15,10 +16,29 @@ env:
   POETRY_VERSION: "1.8.3"
 
 jobs:
+  validate:
+    name: Validate Package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        run: pip install poetry==${{ env.POETRY_VERSION }}
+
+      - name: Validate Poetry configuration
+        run: poetry check
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: validate
 
     steps:
       - uses: actions/checkout@v4
@@ -56,6 +76,7 @@ jobs:
     name: Type Check (informational)
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: validate
 
     steps:
       - uses: actions/checkout@v4
@@ -87,11 +108,53 @@ jobs:
         continue-on-error: true
         run: poetry run mypy src/ --ignore-missing-imports
 
-  test:
-    name: Test
+  unit-contract:
+    name: Unit and Contract Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [lint]
+    needs:
+      - lint
+      - validate
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        run: pip install poetry==${{ env.POETRY_VERSION }}
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            ~/.cache/pypoetry
+          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
+
+      - name: Install dependencies
+        run: poetry install --with dev --with optional
+
+      - name: Run unit and contract tests
+        run: >
+          poetry run pytest --no-cov -q
+          tests/unit
+          tests/contract
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs:
+      - lint
+      - validate
 
     steps:
       - uses: actions/checkout@v4
@@ -122,9 +185,9 @@ jobs:
       - name: Prepare runtime directories
         run: mkdir -p data data/users data/uploads
 
-      - name: Run non-live test suite
+      - name: Run integration tests
         run: >
-          poetry run pytest
-          -m "not live"
-          --tb=short
-          -q
+          poetry run pytest --no-cov -q
+          tests/integration/test_api_auth.py
+          tests/integration/test_rag_flow.py
+          tests/integration/test_research_flow.py
