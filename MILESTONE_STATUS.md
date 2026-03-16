@@ -1,8 +1,8 @@
 # Milestone Status
 
-Last Updated: 2026-03-16
+Last Updated: 2026-03-16 (M4 complete)
 
-## Current Milestone: Milestone 3 - Authenticated API MVP
+## Current Milestone: Milestone 4 - Research Extensions
 
 **Status: 100% Complete** ✅
 
@@ -236,9 +236,79 @@ Last Updated: 2026-03-16
 
 ---
 
-## Milestone 4: Research Extensions (Not Started)
+## Milestone 4: Research Extensions (Complete)
 
-**Status: 0% Complete** ⏳
+**Status: 100% Complete** ✅
+
+**Deliverables:**
+- ✅ Web search adapter behind tool interface
+- ✅ Citation tracker for mixed-source responses
+- ✅ Research planner for multi-step tasks
+- ✅ Optional synthesis path combining RAG + web
+- ✅ Design for hybrid retrieval across shared + user corpora
+
+**Acceptance Criteria:**
+- ✅ Planner selects tools based on query class
+- ✅ Mixed-source responses preserve source attribution
+- ✅ All external integrations have mocked contract tests and opt-in live tests
+
+**Completed Work:**
+
+### Tool Interface ✅
+1. ✅ Created `src/tools/base.py` - Abstract search tool interface
+   - `BaseSearchTool` ABC with `search()` method
+   - `SearchResult` model (title, url, content, score, source_type)
+2. ✅ Created `src/tools/web_search.py` - Tavily web search adapter
+   - Client injection for testability without tavily package
+   - Normalises Tavily response into `SearchResult` objects
+
+### Research Planner ✅
+3. ✅ Created `src/research/planner.py` - Query classifier
+   - `QueryClass` enum: `RAG_ONLY`, `WEB_ONLY`, `MIXED`
+   - Keyword-based classification (no LLM call needed)
+   - `requested_class` vs `query_class` for consistent metadata after fallback
+   - Graceful fallback when tools unavailable
+
+### Mixed-Source Citations ✅
+4. ✅ Created `src/research/citations.py` - Mixed citation tracker
+   - Merges RAG + web results into unified citation list
+   - Deduplication by (source, chunk_id/url)
+   - Preserves `source_type` in metadata (rag/web)
+
+### LangGraph Research Flow ✅
+5. ✅ Created `src/agent/research_flow.py` - Research workflow
+   - `plan -> retrieve + web_search -> synthesize -> cite`
+   - Parallel fan-out for retrieve and web_search nodes
+   - Context built from single retrieval pass (no double-fetch)
+   - Works with RAG only, web only, both, or neither
+
+### Design Document ✅
+6. ✅ Created `docs/hybrid-retrieval-design.md`
+   - Two-tier store model (shared + user)
+   - Hybrid retriever with merge/dedup/re-rank
+   - Access control and migration path
+   - Deferred to Milestone 5 implementation
+
+### Testing ✅
+7. ✅ 31 new tests (9 planner, 5 web search, 9 mixed citations, 5 contract, 4 integration)
+8. ✅ 1 opt-in live test (skipped without TAVILY_API_KEY)
+
+**Review Fixes Applied:**
+- ✅ Client injection for TavilySearchTool (works without tavily package)
+- ✅ Single retrieval pass in research flow (no context divergence)
+- ✅ Split requested_class vs query_class in planner
+
+**Test Results:**
+- Total tests: 133 passed, 1 skipped (live Tavily)
+  - Milestone 1: 31 tests
+  - Milestone 2: 63 tests
+  - Milestone 3: 5 tests
+  - Milestone 4: 31 tests + 5 contract
+- All tests passing ✅
+
+**PR:** #4 - Merged 2026-03-16
+
+**Next Milestone: Milestone 5 - Advanced Operations**
 
 ---
 

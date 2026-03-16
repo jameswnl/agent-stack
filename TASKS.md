@@ -6,25 +6,6 @@ Last Updated: 2026-03-16
 
 ---
 
-### Task #4: Milestone 4 - Research Extensions ⏳
-
-**Status:** PENDING
-**Owner:** Unassigned
-**Milestone:** Milestone 4
-**Blocked By:** Task #3
-
-**Description:** Add web search adapter, research planner, citation tracker, and mixed-source synthesis.
-
-**Subtasks:**
-- [ ] Web search adapter (Tavily) with mocked tests
-- [ ] Research planner (query classification)
-- [ ] Citation tracker for mixed sources
-- [ ] Update LangGraph flow for mixed RAG + web
-- [ ] Contract tests for web search
-- [ ] Opt-in live tests with real Tavily API
-
----
-
 ### Task #5: Milestone 5 - Advanced Operations ⏳
 
 **Status:** PENDING
@@ -46,6 +27,28 @@ Last Updated: 2026-03-16
 ---
 
 ## Completed Tasks
+
+### Task #4: Milestone 4 - Research Extensions ✅
+
+**Status:** COMPLETED
+**Completed:** 2026-03-16
+**Milestone:** Milestone 4
+
+Completed research extensions with web search adapter, query planner, mixed-source citations, and LangGraph research flow.
+
+**Deliverables:**
+- ✅ Tavily web search adapter with client injection
+- ✅ Keyword-based query classifier (RAG_ONLY, WEB_ONLY, MIXED)
+- ✅ Mixed-source citation tracker (RAG + web deduplication)
+- ✅ LangGraph research flow with parallel retrieve + web_search
+- ✅ Hybrid retrieval design document
+- ✅ 31 tests + 5 contract + 1 live (opt-in)
+
+**Test Results:** 133 total tests passing, 1 skipped (live)
+
+**PR:** #4 - Merged 2026-03-16
+
+---
 
 ### Task #2: Milestone 2 - RAG MVP ✅
 
@@ -137,19 +140,19 @@ Created .env.example with all environment variables and configuration templates.
 ## Task Metadata
 
 **Total Tasks:** 7
-**Completed:** 5 (Milestones 1, 2 & 3, pyproject.toml, .env.example)
+**Completed:** 6 (Milestones 1, 2, 3 & 4, pyproject.toml, .env.example)
 **In Progress:** 0
-**Pending:** 2 (Milestones 4, 5)
+**Pending:** 1 (Milestone 5)
 **Blocked:** 0
 
 **Milestone Progress:**
 - Milestone 1: 100% complete ✅
 - Milestone 2: 100% complete ✅
 - Milestone 3: 100% complete ✅
-- Milestone 4: 0% (not started)
+- Milestone 4: 100% complete ✅
 - Milestone 5: 0% (not started)
 
-**Overall Project Progress:** ~60% (3 of 5 milestones complete)
+**Overall Project Progress:** ~80% (4 of 5 milestones complete)
 
 ---
 
