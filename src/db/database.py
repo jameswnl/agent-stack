@@ -37,4 +37,6 @@ def init_db():
 
     Creates all tables defined in models.
     """
+    from . import models as _models  # noqa: F401 — register model classes with Base
+
     Base.metadata.create_all(bind=engine)

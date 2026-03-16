@@ -18,7 +18,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -27,13 +27,30 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - run: pip install ruff
+      - name: Install Poetry
+        run: pip install poetry==${{ env.POETRY_VERSION }}
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            ~/.cache/pypoetry
+          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
+
+      - name: Install dev dependencies
+        run: poetry install --only dev
 
       - name: Ruff lint
-        run: ruff check src/ tests/
+        run: poetry run ruff check src/ tests/
 
       - name: Ruff format
-        run: ruff format --check src/ tests/
+        run: poetry run ruff format --check src/ tests/
 
   typecheck:
     name: Type Check (informational)
