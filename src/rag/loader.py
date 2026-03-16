@@ -1,9 +1,8 @@
 """Document loader for Markdown and Text files."""
 
-import os
+from datetime import datetime
 from pathlib import Path
 from typing import List, Set
-from datetime import datetime
 
 from .models import Document
 
@@ -22,10 +21,7 @@ class DocumentLoader:
         self.extensions = extensions or self.DEFAULT_EXTENSIONS
 
     def load_directory(
-        self,
-        directory_path: str,
-        recursive: bool = True,
-        glob_pattern: str | None = None
+        self, directory_path: str, recursive: bool = True, glob_pattern: str | None = None
     ) -> List[Document]:
         """Load all documents from a directory.
 
@@ -97,13 +93,10 @@ class DocumentLoader:
 
         # Check extension
         if path.suffix.lower() not in self.extensions:
-            raise ValueError(
-                f"Unsupported file extension: {path.suffix}. "
-                f"Supported: {', '.join(self.extensions)}"
-            )
+            raise ValueError(f"Unsupported file extension: {path.suffix}. Supported: {', '.join(self.extensions)}")
 
         # Read file content
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             content = f.read()
 
         # Get file stats
@@ -119,11 +112,7 @@ class DocumentLoader:
             "created_time": datetime.fromtimestamp(stats.st_ctime).isoformat(),
         }
 
-        return Document(
-            content=content,
-            metadata=metadata,
-            source=str(path.absolute())
-        )
+        return Document(content=content, metadata=metadata, source=str(path.absolute()))
 
     def load_files(self, file_paths: List[str]) -> List[Document]:
         """Load multiple document files.

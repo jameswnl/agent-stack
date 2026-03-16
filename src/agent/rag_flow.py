@@ -4,12 +4,11 @@ from typing import List, Optional, TypedDict
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
-from langgraph.graph import START, END, StateGraph
+from langgraph.graph import END, START, StateGraph
 
+from src.rag.citations import build_citations
 from src.rag.models import Citation, RetrievalResult
 from src.rag.retriever import Retriever
-from src.rag.citations import build_citations
-
 
 # Default prompt for synthesis when no custom prompt is provided
 RAG_SYSTEM_PROMPT = """Answer the question using only the provided context. If the context does not contain relevant information, say so. Keep answers concise and cite sources by referring to the source labels in the context."""

@@ -1,8 +1,8 @@
 """Data models for RAG system."""
 
-from datetime import datetime
-from typing import Dict, Any, Optional
-from pydantic import BaseModel, Field, ConfigDict
+from typing import Any, Dict, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Document(BaseModel):
@@ -11,10 +11,7 @@ class Document(BaseModel):
     model_config = ConfigDict(frozen=False)
 
     content: str = Field(..., description="Full text content of the document")
-    metadata: Dict[str, Any] = Field(
-        default_factory=dict,
-        description="Document metadata (filename, path, etc.)"
-    )
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Document metadata (filename, path, etc.)")
     source: str = Field(..., description="Source identifier (file path or URL)")
 
 
@@ -24,10 +21,7 @@ class Chunk(BaseModel):
     model_config = ConfigDict(frozen=False)
 
     content: str = Field(..., description="Chunk text content")
-    metadata: Dict[str, Any] = Field(
-        default_factory=dict,
-        description="Chunk metadata including source and position"
-    )
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Chunk metadata including source and position")
     chunk_id: Optional[str] = Field(None, description="Unique chunk identifier")
     embedding: Optional[list[float]] = Field(None, description="Vector embedding")
 
@@ -46,10 +40,7 @@ class Citation(BaseModel):
     source: str = Field(..., description="Source identifier")
     chunk_id: Optional[str] = Field(None, description="Referenced chunk ID")
     excerpt: Optional[str] = Field(None, description="Relevant text excerpt")
-    metadata: Dict[str, Any] = Field(
-        default_factory=dict,
-        description="Additional citation metadata"
-    )
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional citation metadata")
 
     def format(self) -> str:
         """Format citation as string.

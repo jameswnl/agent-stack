@@ -2,8 +2,8 @@
 
 import pytest
 
-from src.rag.store import VectorStoreManager
 from src.rag.models import Chunk
+from src.rag.store import VectorStoreManager
 
 
 @pytest.fixture
@@ -19,17 +19,17 @@ def sample_chunks():
         Chunk(
             content="Python is a programming language",
             metadata={"source": "doc1.md", "topic": "programming"},
-            chunk_id="chunk1"
+            chunk_id="chunk1",
         ),
         Chunk(
             content="FastAPI is a web framework for Python",
             metadata={"source": "doc2.md", "topic": "web"},
-            chunk_id="chunk2"
+            chunk_id="chunk2",
         ),
         Chunk(
             content="LangChain helps build LLM applications",
             metadata={"source": "doc3.md", "topic": "ai"},
-            chunk_id="chunk3"
+            chunk_id="chunk3",
         ),
     ]
 
@@ -69,9 +69,9 @@ def test_search(vector_store, sample_chunks):
     results = vector_store.search("Python programming", k=2)
 
     assert len(results) <= 2
-    assert all(hasattr(r, 'chunk') for r in results)
-    assert all(hasattr(r, 'score') for r in results)
-    assert all(hasattr(r, 'rank') for r in results)
+    assert all(hasattr(r, "chunk") for r in results)
+    assert all(hasattr(r, "score") for r in results)
+    assert all(hasattr(r, "rank") for r in results)
     # Scores should be between 0 and 1
     assert all(0 <= r.score <= 1 for r in results)
 
@@ -122,10 +122,7 @@ def test_save_and_load(vector_store, sample_chunks, tmp_path):
     assert (save_dir / "metadata.pkl").exists()
 
     # Create new store and load
-    new_store = VectorStoreManager(
-        embeddings=vector_store.embeddings,
-        dimension=128
-    )
+    new_store = VectorStoreManager(embeddings=vector_store.embeddings, dimension=128)
     new_store.load(str(save_dir))
 
     # Verify loaded correctly
@@ -199,18 +196,10 @@ def test_result_rank_assignment(vector_store, sample_chunks):
 @pytest.mark.unit
 def test_different_index_types(mock_embeddings):
     """Test creating stores with different index types."""
-    flat_store = VectorStoreManager(
-        embeddings=mock_embeddings,
-        dimension=128,
-        index_type="flat"
-    )
+    flat_store = VectorStoreManager(embeddings=mock_embeddings, dimension=128, index_type="flat")
     assert flat_store.index_type == "flat"
 
-    ivf_store = VectorStoreManager(
-        embeddings=mock_embeddings,
-        dimension=128,
-        index_type="ivf"
-    )
+    ivf_store = VectorStoreManager(embeddings=mock_embeddings, dimension=128, index_type="ivf")
     assert ivf_store.index_type == "ivf"
 
 
@@ -218,8 +207,4 @@ def test_different_index_types(mock_embeddings):
 def test_unsupported_index_type(mock_embeddings):
     """Test that unsupported index type raises error."""
     with pytest.raises(ValueError, match="Unsupported index type"):
-        VectorStoreManager(
-            embeddings=mock_embeddings,
-            dimension=128,
-            index_type="invalid"
-        )
+        VectorStoreManager(embeddings=mock_embeddings, dimension=128, index_type="invalid")

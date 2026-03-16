@@ -1,17 +1,14 @@
 """CRUD operations for database models."""
 
-from sqlalchemy.orm import Session
 from typing import Optional
-from .models import User, Conversation
+
+from sqlalchemy.orm import Session
+
 from ..auth.password import hash_password
+from .models import User
 
 
-def create_user(
-    db: Session,
-    email: str,
-    password: str,
-    full_name: str | None = None
-) -> User:
+def create_user(db: Session, email: str, password: str, full_name: str | None = None) -> User:
     """Create a new user.
 
     Args:
@@ -24,11 +21,7 @@ def create_user(
         Created user instance
     """
     hashed_password = hash_password(password)
-    user = User(
-        email=email,
-        full_name=full_name,
-        hashed_password=hashed_password
-    )
+    user = User(email=email, full_name=full_name, hashed_password=hashed_password)
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -61,11 +54,7 @@ def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
     return db.query(User).filter(User.id == user_id).first()
 
 
-def update_user(
-    db: Session,
-    user_id: int,
-    **kwargs
-) -> Optional[User]:
+def update_user(db: Session, user_id: int, **kwargs) -> Optional[User]:
     """Update user fields.
 
     Args:

@@ -14,7 +14,7 @@ from langgraph.graph import END, START, StateGraph
 from src.rag.models import Citation, RetrievalResult
 from src.rag.retriever import Retriever
 from src.research.citations import build_mixed_citations
-from src.research.planner import ResearchPlan, classify_query
+from src.research.planner import classify_query
 from src.tools.base import BaseSearchTool, SearchResult
 
 logger = logging.getLogger(__name__)

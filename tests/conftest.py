@@ -2,7 +2,6 @@
 
 import os
 import tempfile
-from typing import Generator
 
 import numpy as np
 import pytest
@@ -10,10 +9,9 @@ from langchain_core.embeddings import Embeddings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.db.database import Base
-from src.db.models import User
-from src.db.crud import create_user
 from src.auth.jwt import create_access_token
+from src.db.crud import create_user
+from src.db.database import Base
 
 
 class MockEmbeddings(Embeddings):
@@ -47,10 +45,7 @@ def test_db_path():
 @pytest.fixture(scope="function")
 def test_engine(test_db_path):
     """Create a test database engine."""
-    engine = create_engine(
-        f"sqlite:///{test_db_path}",
-        connect_args={"check_same_thread": False}
-    )
+    engine = create_engine(f"sqlite:///{test_db_path}", connect_args={"check_same_thread": False})
     Base.metadata.create_all(bind=engine)
     yield engine
     Base.metadata.drop_all(bind=engine)
@@ -68,12 +63,7 @@ def db_session(test_engine):
 @pytest.fixture
 def test_user(db_session):
     """Create a test user."""
-    user = create_user(
-        db=db_session,
-        email="test@example.com",
-        password="testpassword123",
-        full_name="Test User"
-    )
+    user = create_user(db=db_session, email="test@example.com", password="testpassword123", full_name="Test User")
     return user
 
 
@@ -87,12 +77,7 @@ def test_user_token(test_user):
 @pytest.fixture
 def test_user2(db_session):
     """Create a second test user for isolation tests."""
-    user = create_user(
-        db=db_session,
-        email="test2@example.com",
-        password="testpassword456",
-        full_name="Test User 2"
-    )
+    user = create_user(db=db_session, email="test2@example.com", password="testpassword456", full_name="Test User 2")
     return user
 
 

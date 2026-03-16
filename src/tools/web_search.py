@@ -31,8 +31,7 @@ class TavilySearchTool(BaseSearchTool):
                 from tavily import TavilyClient
             except ImportError as exc:
                 raise ImportError(
-                    "tavily-python is required for web search. "
-                    "Install with: pip install tavily-python"
+                    "tavily-python is required for web search. Install with: pip install tavily-python"
                 ) from exc
             self._client = TavilyClient(api_key=api_key)
 

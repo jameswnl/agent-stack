@@ -1,6 +1,7 @@
 """Unit tests for configuration module."""
 
 import pytest
+
 from src.config.settings import Settings
 
 

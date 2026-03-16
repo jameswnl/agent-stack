@@ -1,10 +1,9 @@
 """Anthropic provider implementation."""
 
-from typing import Any, Dict
 from langchain_anthropic import ChatAnthropic
-from langchain_openai import OpenAIEmbeddings  # Anthropic doesn't have embeddings
-from langchain_core.language_models import BaseChatModel
 from langchain_core.embeddings import Embeddings
+from langchain_core.language_models import BaseChatModel
+from langchain_openai import OpenAIEmbeddings  # Anthropic doesn't have embeddings
 
 from .base import BaseLLMProvider
 
@@ -39,7 +38,7 @@ class AnthropicProvider(BaseLLMProvider):
             api_key=api_key,
             model=model_name,
             temperature=temperature,
-            **{k: v for k, v in kwargs.items() if k not in ["model", "temperature"]}
+            **{k: v for k, v in kwargs.items() if k not in ["model", "temperature"]},
         )
 
     def get_embeddings(self, **kwargs) -> Embeddings:
@@ -54,14 +53,8 @@ class AnthropicProvider(BaseLLMProvider):
         # Anthropic doesn't provide embeddings, use OpenAI
         openai_key = self.config.get("openai_api_key")
         if not openai_key:
-            raise ValueError(
-                "OPENAI_API_KEY is required for embeddings when using Anthropic provider"
-            )
+            raise ValueError("OPENAI_API_KEY is required for embeddings when using Anthropic provider")
 
         model = kwargs.get("model", self.DEFAULT_EMBEDDINGS_MODEL)
 
-        return OpenAIEmbeddings(
-            api_key=openai_key,
-            model=model,
-            **{k: v for k, v in kwargs.items() if k != "model"}
-        )
+        return OpenAIEmbeddings(api_key=openai_key, model=model, **{k: v for k, v in kwargs.items() if k != "model"})

@@ -29,7 +29,7 @@ app = FastAPI(
     title="LangGraph RAG Service",
     description="Multi-user RAG + Research service with authentication",
     version="0.1.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 
@@ -42,16 +42,12 @@ app.include_router(chat.router)
 @app.get("/")
 async def root():
     """Root endpoint."""
-    return {
-        "message": "LangGraph RAG Service",
-        "version": "0.1.0",
-        "environment": settings.app_env
-    }
+    return {"message": "LangGraph RAG Service", "version": "0.1.0", "environment": settings.app_env}
+
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
-        "src.main:app",
-        host=settings.api_host,
-        port=settings.api_port,
-        reload=settings.app_env == "development"
+        "src.main:app", host=settings.api_host, port=settings.api_port, reload=settings.app_env == "development"
     )

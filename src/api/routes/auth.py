@@ -60,4 +60,3 @@ def login_user(request: LoginRequest, db: Session = Depends(get_db)) -> TokenRes
 def read_current_user(current_user: User = Depends(get_current_user)) -> UserResponse:
     """Return the authenticated user."""
     return _to_user_response(current_user)
-

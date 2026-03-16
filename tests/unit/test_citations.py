@@ -1,8 +1,9 @@
 """Unit tests for citation formatting."""
 
 import pytest
+
 from src.rag.citations import build_citations, format_citations
-from src.rag.models import Chunk, Citation, RetrievalResult
+from src.rag.models import Chunk, RetrievalResult
 
 
 @pytest.fixture

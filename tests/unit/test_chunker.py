@@ -1,8 +1,9 @@
 """Unit tests for text chunker."""
 
 import pytest
+
 from src.rag.chunker import TextChunker
-from src.rag.models import Document, Chunk
+from src.rag.models import Chunk, Document
 
 
 @pytest.fixture
@@ -22,11 +23,7 @@ This is the second paragraph with more content.
 
 This is the third paragraph with even more content to test chunking."""
 
-    return Document(
-        content=content,
-        metadata={"filename": "test.md", "source": "test"},
-        source="test.md"
-    )
+    return Document(content=content, metadata={"filename": "test.md", "source": "test"}, source="test.md")
 
 
 @pytest.mark.unit

@@ -1,15 +1,15 @@
 """Integration tests for the research flow: plan -> retrieve/search -> synthesize -> cite."""
 
-import pytest
 from pathlib import Path
 
-from src.rag.loader import DocumentLoader
-from src.rag.chunker import TextChunker
-from src.rag.store import VectorStoreManager
-from src.rag.retriever import Retriever
-from src.agent.research_flow import ResearchFlow
-from src.tools.base import BaseSearchTool, SearchResult
+import pytest
 
+from src.agent.research_flow import ResearchFlow
+from src.rag.chunker import TextChunker
+from src.rag.loader import DocumentLoader
+from src.rag.retriever import Retriever
+from src.rag.store import VectorStoreManager
+from src.tools.base import BaseSearchTool, SearchResult
 
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures" / "documents"
 

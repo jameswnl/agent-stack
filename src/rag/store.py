@@ -18,7 +18,7 @@ class VectorStoreManager:
         self,
         embeddings: Embeddings,
         dimension: int = 1536,  # Default for OpenAI text-embedding-3-small
-        index_type: str = "flat"
+        index_type: str = "flat",
     ):
         """Initialize vector store manager.
 
@@ -77,12 +77,7 @@ class VectorStoreManager:
             chunk.embedding = embedding
             self.chunks.append(chunk)
 
-    def search(
-        self,
-        query: str,
-        k: int = 5,
-        threshold: Optional[float] = None
-    ) -> List[RetrievalResult]:
+    def search(self, query: str, k: int = 5, threshold: Optional[float] = None) -> List[RetrievalResult]:
         """Search for similar chunks.
 
         Args:
@@ -118,11 +113,7 @@ class VectorStoreManager:
             # Using exponential decay: score = exp(-distance)
             score = float(np.exp(-distance))
 
-            result = RetrievalResult(
-                chunk=self.chunks[idx],
-                score=score,
-                rank=rank
-            )
+            result = RetrievalResult(chunk=self.chunks[idx], score=score, rank=rank)
             results.append(result)
 
         return results
@@ -142,7 +133,7 @@ class VectorStoreManager:
 
         # Save chunks
         chunks_path = path / "chunks.pkl"
-        with open(chunks_path, 'wb') as f:
+        with open(chunks_path, "wb") as f:
             pickle.dump(self.chunks, f)
 
         # Save metadata
@@ -152,7 +143,7 @@ class VectorStoreManager:
             "index_type": self.index_type,
             "num_chunks": len(self.chunks),
         }
-        with open(metadata_path, 'wb') as f:
+        with open(metadata_path, "wb") as f:
             pickle.dump(metadata, f)
 
     def load(self, directory_path: str) -> None:
@@ -181,15 +172,14 @@ class VectorStoreManager:
         if not chunks_path.exists():
             raise FileNotFoundError(f"Chunks file not found: {chunks_path}")
 
-        with open(chunks_path, 'rb') as f:
+        with open(chunks_path, "rb") as f:
             self.chunks = pickle.load(f)
 
         # Load metadata (optional, for verification)
         metadata_path = path / "metadata.pkl"
         if metadata_path.exists():
-            with open(metadata_path, 'rb') as f:
-                metadata = pickle.load(f)
-                # Could verify metadata matches current config
+            with open(metadata_path, "rb") as f:
+                pickle.load(f)  # loaded for future verification
 
     def clear(self) -> None:
         """Clear the vector store."""
@@ -206,6 +196,6 @@ class VectorStoreManager:
             "num_chunks": len(self.chunks),
             "index_type": self.index_type,
             "dimension": self.dimension,
-            "is_trained": self.index.is_trained if hasattr(self.index, 'is_trained') else True,
+            "is_trained": self.index.is_trained if hasattr(self.index, "is_trained") else True,
             "total_vectors": self.index.ntotal,
         }

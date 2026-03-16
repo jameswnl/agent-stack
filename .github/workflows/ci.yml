@@ -10,36 +10,111 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  PYTHON_VERSION: "3.11"
+  POETRY_VERSION: "1.8.3"
+
 jobs:
-  test:
-    name: Test
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: pip install poetry==1.8.3
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Configure Poetry
         run: poetry config virtualenvs.in-project true
 
-      - name: Cache virtualenv and Poetry cache
+      - name: Cache virtualenv
         uses: actions/cache@v4
         with:
           path: |
             .venv
             ~/.cache/pypoetry
-          key: ${{ runner.os }}-py311-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-py311-poetry-
+            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
+
+      - name: Install dev dependencies
+        run: poetry install --only dev
+
+      - name: Ruff lint
+        run: poetry run ruff check src/ tests/
+
+      - name: Ruff format
+        run: poetry run ruff format --check src/ tests/
+
+  typecheck:
+    name: Type Check (informational)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        run: pip install poetry==${{ env.POETRY_VERSION }}
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            ~/.cache/pypoetry
+          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
+
+      - name: Install dependencies
+        run: poetry install --with dev --with optional
+
+      - name: Mypy
+        continue-on-error: true
+        run: poetry run mypy src/ --ignore-missing-imports
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [lint]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        run: pip install poetry==${{ env.POETRY_VERSION }}
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            ~/.cache/pypoetry
+          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
 
       - name: Install dependencies
         run: poetry install --with dev --with optional
@@ -49,8 +124,7 @@ jobs:
 
       - name: Run non-live test suite
         run: >
-          poetry run pytest --no-cov -q
-          tests/unit
-          tests/contract
-          tests/integration/test_api_auth.py
-          tests/integration/test_rag_flow.py
+          poetry run pytest
+          -m "not live"
+          --tb=short
+          -q

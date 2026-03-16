@@ -57,20 +57,22 @@ def test_tavily_implements_interface():
 @pytest.mark.unit
 def test_tavily_normalises_results():
     """TavilySearchTool normalises raw Tavily response into SearchResult objects."""
-    fake = FakeClient(results=[
-        {
-            "title": "Result 1",
-            "url": "https://example.com/1",
-            "content": "Content 1",
-            "score": 0.9,
-        },
-        {
-            "title": "Result 2",
-            "url": "https://example.com/2",
-            "content": "Content 2",
-            "score": 0.7,
-        },
-    ])
+    fake = FakeClient(
+        results=[
+            {
+                "title": "Result 1",
+                "url": "https://example.com/1",
+                "content": "Content 1",
+                "score": 0.9,
+            },
+            {
+                "title": "Result 2",
+                "url": "https://example.com/2",
+                "content": "Content 2",
+                "score": 0.7,
+            },
+        ]
+    )
 
     tool = TavilySearchTool(api_key="test-key", client=fake)
     results = tool.search("test query", max_results=2)

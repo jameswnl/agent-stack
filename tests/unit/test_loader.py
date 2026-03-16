@@ -1,7 +1,9 @@
 """Unit tests for document loader."""
 
-import pytest
 from pathlib import Path
+
+import pytest
+
 from src.rag.loader import DocumentLoader
 from src.rag.models import Document
 
