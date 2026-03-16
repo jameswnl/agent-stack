@@ -6,6 +6,16 @@ from src.tools.base import BaseSearchTool, SearchResult
 from src.tools.web_search import TavilySearchTool
 
 
+class FakeClient:
+    """Fake Tavily client for testing without the tavily package."""
+
+    def __init__(self, results=None):
+        self._results = results or []
+
+    def search(self, **kw):
+        return {"results": self._results}
+
+
 @pytest.mark.unit
 def test_search_result_model():
     """SearchResult accepts all fields."""
@@ -33,62 +43,36 @@ def test_search_result_defaults():
 def test_tavily_requires_api_key():
     """TavilySearchTool raises if no key is given."""
     with pytest.raises(ValueError, match="TAVILY_API_KEY is required"):
-        TavilySearchTool(api_key="")
+        TavilySearchTool(api_key="", client=FakeClient())
 
 
 @pytest.mark.unit
-def test_tavily_implements_interface(monkeypatch):
+def test_tavily_implements_interface():
     """TavilySearchTool is a BaseSearchTool."""
-    # Patch TavilyClient so we don't need a real key
-    import src.tools.web_search as ws_mod
-    monkeypatch.setattr(
-        ws_mod,
-        "__import__",
-        lambda *a, **kw: None,
-        raising=False,
-    )
-
-    class FakeClient:
-        def __init__(self, **kw):
-            pass
-        def search(self, **kw):
-            return {"results": []}
-
-    monkeypatch.setattr("tavily.TavilyClient", FakeClient, raising=False)
-
-    tool = TavilySearchTool(api_key="test-key")
+    tool = TavilySearchTool(api_key="test-key", client=FakeClient())
     assert isinstance(tool, BaseSearchTool)
     assert tool.name == "tavily_web_search"
 
 
 @pytest.mark.unit
-def test_tavily_normalises_results(monkeypatch):
+def test_tavily_normalises_results():
     """TavilySearchTool normalises raw Tavily response into SearchResult objects."""
+    fake = FakeClient(results=[
+        {
+            "title": "Result 1",
+            "url": "https://example.com/1",
+            "content": "Content 1",
+            "score": 0.9,
+        },
+        {
+            "title": "Result 2",
+            "url": "https://example.com/2",
+            "content": "Content 2",
+            "score": 0.7,
+        },
+    ])
 
-    class FakeClient:
-        def __init__(self, **kw):
-            pass
-        def search(self, **kw):
-            return {
-                "results": [
-                    {
-                        "title": "Result 1",
-                        "url": "https://example.com/1",
-                        "content": "Content 1",
-                        "score": 0.9,
-                    },
-                    {
-                        "title": "Result 2",
-                        "url": "https://example.com/2",
-                        "content": "Content 2",
-                        "score": 0.7,
-                    },
-                ]
-            }
-
-    monkeypatch.setattr("tavily.TavilyClient", FakeClient)
-
-    tool = TavilySearchTool(api_key="test-key")
+    tool = TavilySearchTool(api_key="test-key", client=fake)
     results = tool.search("test query", max_results=2)
 
     assert len(results) == 2

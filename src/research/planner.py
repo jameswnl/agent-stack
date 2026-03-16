@@ -18,7 +18,8 @@ class ResearchPlan(BaseModel):
     """Describes which tools to invoke for a query."""
 
     query: str = Field(..., description="Original user query")
-    query_class: QueryClass = Field(..., description="Classified query type")
+    requested_class: QueryClass = Field(..., description="What the query signals")
+    query_class: QueryClass = Field(..., description="Resolved class after tool availability")
     use_rag: bool = Field(default=True)
     use_web: bool = Field(default=False)
     search_queries: List[str] = Field(
@@ -69,17 +70,17 @@ def classify_query(
     web_signal = any(kw in lower for kw in _WEB_KEYWORDS)
     rag_signal = any(kw in lower for kw in _RAG_KEYWORDS)
 
-    # Determine query class
+    # Determine requested query class from signals
     if web_signal and rag_signal:
-        query_class = QueryClass.MIXED
+        requested_class = QueryClass.MIXED
     elif web_signal:
-        query_class = QueryClass.WEB_ONLY
+        requested_class = QueryClass.WEB_ONLY
     else:
-        query_class = QueryClass.RAG_ONLY
+        requested_class = QueryClass.RAG_ONLY
 
     # Constrain to available tools
-    use_rag = has_rag_index and query_class in (QueryClass.RAG_ONLY, QueryClass.MIXED)
-    use_web = has_web_search and query_class in (QueryClass.WEB_ONLY, QueryClass.MIXED)
+    use_rag = has_rag_index and requested_class in (QueryClass.RAG_ONLY, QueryClass.MIXED)
+    use_web = has_web_search and requested_class in (QueryClass.WEB_ONLY, QueryClass.MIXED)
 
     # Fall back: if no tool is selected, prefer whatever is available
     if not use_rag and not use_web:
@@ -88,11 +89,20 @@ def classify_query(
         elif has_web_search:
             use_web = True
 
+    # Resolve the actual execution class based on what will run
+    if use_rag and use_web:
+        resolved_class = QueryClass.MIXED
+    elif use_web:
+        resolved_class = QueryClass.WEB_ONLY
+    else:
+        resolved_class = QueryClass.RAG_ONLY
+
     search_queries = [query] if use_web else []
 
     return ResearchPlan(
         query=query,
-        query_class=query_class,
+        requested_class=requested_class,
+        query_class=resolved_class,
         use_rag=use_rag,
         use_web=use_web,
         search_queries=search_queries,

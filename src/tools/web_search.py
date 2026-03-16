@@ -1,6 +1,6 @@
 """Tavily web search adapter."""
 
-from typing import List
+from typing import Any, List, Optional
 
 from .base import BaseSearchTool, SearchResult
 
@@ -8,25 +8,34 @@ from .base import BaseSearchTool, SearchResult
 class TavilySearchTool(BaseSearchTool):
     """Web search tool backed by the Tavily API."""
 
-    def __init__(self, api_key: str, search_depth: str = "basic"):
-        """Initialise with a Tavily API key.
+    def __init__(
+        self,
+        api_key: str,
+        search_depth: str = "basic",
+        client: Optional[Any] = None,
+    ):
+        """Initialise with a Tavily API key or an injected client.
 
         Args:
             api_key: Tavily API key.
             search_depth: "basic" or "advanced".
+            client: Optional pre-built client (useful for testing).
         """
         if not api_key:
             raise ValueError("TAVILY_API_KEY is required for web search")
 
-        try:
-            from tavily import TavilyClient
-        except ImportError as exc:
-            raise ImportError(
-                "tavily-python is required for web search. "
-                "Install with: pip install tavily-python"
-            ) from exc
+        if client is not None:
+            self._client = client
+        else:
+            try:
+                from tavily import TavilyClient
+            except ImportError as exc:
+                raise ImportError(
+                    "tavily-python is required for web search. "
+                    "Install with: pip install tavily-python"
+                ) from exc
+            self._client = TavilyClient(api_key=api_key)
 
-        self._client = TavilyClient(api_key=api_key)
         self._search_depth = search_depth
 
     @property

@@ -3,8 +3,8 @@
 These tests validate that the TavilySearchTool correctly implements the
 BaseSearchTool interface and normalises Tavily API responses.
 
-The tests use a mocked Tavily client — they do NOT call the live API.
-Use the ``live`` marker tests for real API verification.
+The tests use an injected fake client — they do NOT require the tavily
+package or call the live API.
 """
 
 import pytest
@@ -15,9 +15,6 @@ from src.tools.web_search import TavilySearchTool
 
 class FakeTavilyClient:
     """Fake Tavily client that returns canned responses."""
-
-    def __init__(self, **kwargs):
-        pass
 
     def search(self, query: str, search_depth: str = "basic", max_results: int = 5):
         return {
@@ -33,10 +30,9 @@ class FakeTavilyClient:
 
 
 @pytest.fixture
-def tavily_tool(monkeypatch):
-    """TavilySearchTool with a mocked client."""
-    monkeypatch.setattr("tavily.TavilyClient", FakeTavilyClient)
-    return TavilySearchTool(api_key="contract-test-key")
+def tavily_tool():
+    """TavilySearchTool with an injected fake client."""
+    return TavilySearchTool(api_key="contract-test-key", client=FakeTavilyClient())
 
 
 @pytest.mark.contract

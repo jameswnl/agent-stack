@@ -73,7 +73,15 @@ def _build_retrieve_node(retriever: Optional[Retriever]):
 
         query = state.get("query", "")
         results = retriever.retrieve(query)
-        context = retriever.retrieve_with_context(query)
+
+        # Build context from the already-fetched results to avoid a
+        # second retrieval call that could diverge.
+        context_parts = []
+        for i, result in enumerate(results, 1):
+            source = result.chunk.metadata.get("source", "unknown")
+            context_parts.append(f"[Source {i}: {source}]\n{result.chunk.content}")
+        context = "\n\n".join(context_parts)
+
         return {"retrieval_results": results, "context": context}
 
     return retrieve_node
