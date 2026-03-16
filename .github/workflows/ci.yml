@@ -36,10 +36,9 @@ jobs:
         run: ruff format --check src/ tests/
 
   typecheck:
-    name: Type Check
+    name: Type Check (informational)
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -68,6 +67,7 @@ jobs:
         run: poetry install --with dev --with optional
 
       - name: Mypy
+        continue-on-error: true
         run: poetry run mypy src/ --ignore-missing-imports
 
   test:
