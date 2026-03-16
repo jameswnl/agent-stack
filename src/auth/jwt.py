@@ -1,8 +1,10 @@
 """JWT token creation and verification."""
 
 from datetime import UTC, datetime, timedelta
-from typing import Dict, Any, Optional
-import jwt
+from typing import Any, Dict, Optional
+
+from jose import JWTError, jwt
+
 from ..config.settings import settings
 
 
@@ -47,5 +49,5 @@ def verify_token(token: str) -> Optional[Dict[str, Any]]:
             algorithms=[settings.jwt_algorithm]
         )
         return payload
-    except jwt.PyJWTError:
+    except JWTError:
         return None
