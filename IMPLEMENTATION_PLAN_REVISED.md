@@ -103,11 +103,46 @@ That combination is unstable unless external integrations are explicitly treated
 - Admin user bootstrap flows
 - Advanced error diagnosis/log analysis tools
 - Provider hot-switching per request across all endpoints
+- Shared corpora layered on top of per-user stores
 
 <!--
 Change reason:
 The updated source plan now covers more infrastructure detail, but it still includes all of these in the critical path, which remains the main source of over-scoping.
 Deferring them does not remove them; it makes the first release buildable and testable.
+-->
+
+### Future API Improvements (Post-Milestone 3)
+
+Based on Milestone 3 PR review, the following enhancements could be considered for future iterations:
+
+1. **Rate Limiting** - Add request throttling to prevent abuse
+   - Suggested implementation: slowapi or FastAPI-limiter
+   - Priority: Recommended for production deployment (Milestone 5)
+
+2. **Pagination Support** - Add pagination for large document indexing operations
+   - Current: Single-batch indexing
+   - Future: Support chunked uploads and background processing
+   - Priority: Low (works well for MVP use cases)
+
+3. **Vector Store Caching** - Cache loaded vector stores per user
+   - Current: Loads from disk per request
+   - Future: LRU cache with TTL for frequently accessed stores
+   - Priority: Medium (optimization for high-traffic scenarios)
+
+4. **Conversation History** - Add conversation context and message threading
+   - Status: Intentionally deferred per Decision 1 (stateless MVP)
+   - Database models exist but CRUD operations not implemented
+   - Priority: Medium (useful for chat continuity)
+
+5. **CORS Configuration** - Add CORS middleware for frontend integration
+   - Current: No CORS headers configured
+   - Future: Configurable origins via environment variables
+   - Priority: Required when adding web frontend
+
+<!--
+Change reason:
+Documented during Milestone 3 PR review to capture improvement opportunities identified in production-ready API implementation.
+These represent quality-of-life enhancements rather than MVP blockers.
 -->
 
 ## Architecture Decisions
@@ -139,6 +174,20 @@ src/
   - `load()`
 - `research.tool_registry.ToolExecutor`
   - execution boundary for optional tools
+
+### Vector Store Topology
+
+- MVP: one persisted vector store per user for strict document isolation
+- Future: a hybrid retrieval model with:
+  - one shared/global corpus for common documentation
+  - one per-user private corpus for user-uploaded documents
+  - merged retrieval that searches both stores and preserves source scope in citations
+
+<!--
+Change reason:
+The current implementation uses per-user stores only, which is correct for isolation but can duplicate embeddings and storage for common documents.
+Adding shared corpora here documents the intended future direction without expanding MVP scope.
+-->
 
 <!--
 Change reason:
@@ -230,6 +279,7 @@ Deliverables:
 - citation tracker for mixed-source responses
 - research planner for multi-step tasks
 - optional synthesis path combining RAG + web
+- design for hybrid retrieval across shared + user corpora
 
 Acceptance criteria:
 
@@ -250,6 +300,7 @@ Deliverables:
 - log analysis and error diagnosis tools
 - streaming chat endpoint
 - operational docs and deployment guidance
+- implementation of shared/global corpora indexing and retrieval
 
 Acceptance criteria:
 
@@ -417,6 +468,8 @@ Centralizing settings reduces hidden behavior.
   - Mitigation: benchmark chunking strategies before adding research tools
 - User isolation bugs expose wrong documents
   - Mitigation: make user scope part of store API and integration-test it early
+- Shared and private corpora may produce duplicate or conflicting results
+  - Mitigation: add source-scope metadata, deduplication, and ranking rules before enabling hybrid retrieval by default
 - External tools make CI flaky
   - Mitigation: keep them behind mocks and opt-in live suites
 - MCP broadens security surface
