@@ -167,10 +167,10 @@ Created .env.example with all environment variables and configuration templates.
 
 ### Decision 2: Dependency Management - uv Selected
 
-**Date:** 2026-03-14
+**Date:** 2026-03-14 (migrated 2026-03-16)
 **Context:** Poetry not available, need to choose pip or uv
-**Decision:** Use uv for dependency installation
-**Rationale:** Faster than pip, better dependency resolution
+**Decision:** Use uv with PEP 621 pyproject.toml and uv.lock
+**Rationale:** Faster than pip, better dependency resolution, standard-compliant project metadata
 
 ### Decision 3: Test Strategy - Separate Contract and Live Tests
 
@@ -190,23 +190,18 @@ To resume work in a new session:
    cd ~/ws/langgraph
    ```
 
-2. **Activate virtual environment:**
+2. **Install dependencies:**
    ```bash
-   source .venv/bin/activate
+   uv sync --extra dev --extra research
    ```
 
 3. **Review current status:**
    - Read `MILESTONE_STATUS.md` for milestone progress
    - Read `TASKS.md` for current task status
-   - Read `IMPLEMENTATION_PLAN_REVISED.md` for overall plan
 
-4. **Check what's blocking:**
-   - Look at "Remaining Work" in MILESTONE_STATUS.md
-   - Look at "Blockers" in TASKS.md
-
-5. **Run tests to see current state:**
+4. **Run tests to see current state:**
    ```bash
-   PYTHONPATH=. pytest tests/unit/ -v -m unit
+   uv run pytest -q
    ```
 
-6. **Continue from Task #1 if incomplete, or move to Task #2**
+5. **Continue with Milestone 5 (Advanced Operations)**

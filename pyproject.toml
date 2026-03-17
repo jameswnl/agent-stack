@@ -1,63 +1,62 @@
-[tool.poetry]
+[project]
 name = "langgraph-rag-service"
 version = "0.1.0"
 description = "RAG + Research service with multi-user authentication"
-authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "src"}]
+requires-python = ">=3.11"
+dependencies = [
+    # Core LangChain/LangGraph
+    "langgraph>=0.2.45",
+    "langchain>=0.3.13",
+    "langchain-core>=0.3.21",
+    "langchain-community>=0.3.13",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.7.1",
 
-[tool.poetry.dependencies]
-python = "^3.11"
+    # LLM Providers
+    "langchain-openai>=0.2.12",
+    "langchain-anthropic>=0.3.0",
 
-# Core LangChain/LangGraph
-langgraph = "^0.2.45"
-langchain = "^0.3.13"
-langchain-core = "^0.3.21"
-langchain-community = "^0.3.13"
-pydantic = "^2.10.6"
-pydantic-settings = "^2.7.1"
+    # RAG
+    "faiss-cpu>=1.9.0",
+    "tiktoken>=0.8.0",
 
-# LLM Providers
-langchain-openai = "^0.2.12"
-langchain-anthropic = "^0.3.0"
+    # API/Auth/DB
+    "fastapi>=0.115.6",
+    "uvicorn[standard]>=0.34.0",
+    "sqlalchemy>=2.0.36",
+    "alembic>=1.14.0",
+    "python-jose[cryptography]>=3.3.0",
+    "bcrypt>=4.0.0",
 
-# RAG
-faiss-cpu = "^1.9.0"
-tiktoken = "^0.8.0"
+    # Utilities
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0.2",
+]
 
-# API/Auth/DB
-fastapi = "^0.115.6"
-uvicorn = {extras = ["standard"], version = "^0.34.0"}
-sqlalchemy = "^2.0.36"
-alembic = "^1.14.0"
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-bcrypt = "^4.0.0"
-
-# Utilities
-python-dotenv = "^1.0.0"
-pyyaml = "^6.0.2"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.4"
-pytest-asyncio = "^0.24.0"
-pytest-cov = "^6.0.0"
-pytest-mock = "^3.14.0"
-ruff = "^0.8.4"
-mypy = "^1.14.0"
-httpx = "^0.28.1"
-
-[tool.poetry.group.optional]
-optional = true
-
-[tool.poetry.group.optional.dependencies]
-# Optional research tools (Milestone 4+)
-tavily-python = "^0.5.0"
-langchain-google-genai = "^2.0.8"
-langchain-ollama = "^0.2.0"
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
+    "ruff>=0.8.4",
+    "mypy>=1.14.0",
+    "httpx>=0.28.1",
+]
+research = [
+    # Optional research tools (Milestone 4+)
+    "tavily-python>=0.5.0",
+    "langchain-google-genai>=2.0.8",
+    "langchain-ollama>=0.2.0",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
 
 [tool.ruff]
 line-length = 120
@@ -78,7 +77,7 @@ markers = [
     "unit: Unit tests with no external dependencies",
     "integration: Integration tests with in-memory/ephemeral services",
     "contract: Contract tests for external service adapters",
-    "live: Live tests requiring external services (opt-in only)"
+    "live: Live tests requiring external services (opt-in only)",
 ]
 
 [tool.mypy]

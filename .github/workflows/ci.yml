@@ -13,7 +13,7 @@ concurrency:
 
 env:
   PYTHON_VERSION: "3.11"
-  POETRY_VERSION: "1.8.3"
+  UV_VERSION: "0.7"
 
 jobs:
   validate:
@@ -24,15 +24,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry
-        run: pip install poetry==${{ env.POETRY_VERSION }}
-
-      - name: Validate Poetry configuration
-        run: poetry check
+      - name: Validate pyproject.toml
+        run: uv lock --check
 
   lint:
     name: Lint
@@ -43,34 +44,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry
-        run: pip install poetry==${{ env.POETRY_VERSION }}
-
-      - name: Configure Poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Cache virtualenv
-        uses: actions/cache@v4
-        with:
-          path: |
-            .venv
-            ~/.cache/pypoetry
-          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
-
       - name: Install dev dependencies
-        run: poetry install --only dev
+        run: uv sync --extra dev
 
       - name: Ruff lint
-        run: poetry run ruff check src/ tests/
+        run: uv run ruff check src/ tests/
 
       - name: Ruff format
-        run: poetry run ruff format --check src/ tests/
+        run: uv run ruff format --check src/ tests/
 
   typecheck:
     name: Type Check (informational)
@@ -81,32 +70,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry
-        run: pip install poetry==${{ env.POETRY_VERSION }}
-
-      - name: Configure Poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Cache virtualenv
-        uses: actions/cache@v4
-        with:
-          path: |
-            .venv
-            ~/.cache/pypoetry
-          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
-
       - name: Install dependencies
-        run: poetry install --with dev --with optional
+        run: uv sync --extra dev --extra research
 
       - name: Mypy
         continue-on-error: true
-        run: poetry run mypy src/ --ignore-missing-imports
+        run: uv run mypy src/ --ignore-missing-imports
 
   unit-contract:
     name: Unit and Contract Tests
@@ -119,32 +96,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry
-        run: pip install poetry==${{ env.POETRY_VERSION }}
-
-      - name: Configure Poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Cache virtualenv
-        uses: actions/cache@v4
-        with:
-          path: |
-            .venv
-            ~/.cache/pypoetry
-          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
-
       - name: Install dependencies
-        run: poetry install --with dev --with optional
+        run: uv sync --extra dev --extra research
 
       - name: Run unit and contract tests
         run: >
-          poetry run pytest --no-cov -q
+          uv run pytest --no-cov -q
           tests/unit
           tests/contract
 
@@ -159,35 +124,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry
-        run: pip install poetry==${{ env.POETRY_VERSION }}
-
-      - name: Configure Poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Cache virtualenv
-        uses: actions/cache@v4
-        with:
-          path: |
-            .venv
-            ~/.cache/pypoetry
-          key: ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-${{ env.PYTHON_VERSION }}-poetry-
-
       - name: Install dependencies
-        run: poetry install --with dev --with optional
+        run: uv sync --extra dev --extra research
 
       - name: Prepare runtime directories
         run: mkdir -p data data/users data/uploads
 
       - name: Run integration tests
         run: >
-          poetry run pytest --no-cov -q
+          uv run pytest --no-cov -q
           tests/integration/test_api_auth.py
           tests/integration/test_rag_flow.py
           tests/integration/test_research_flow.py

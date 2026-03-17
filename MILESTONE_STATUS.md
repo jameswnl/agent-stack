@@ -338,45 +338,31 @@ Last Updated: 2026-03-16 (M4 complete)
 
 ---
 
-## Dependencies Installed
+## Dependencies
 
-- ✅ Core LangChain/LangGraph packages
-- ✅ OpenAI and Anthropic provider packages
-- ✅ FastAPI and Uvicorn
-- ✅ SQLAlchemy and Alembic
-- ✅ python-jose and PyJWT
-- ✅ bcrypt (migrated from passlib)
-- ✅ pytest and testing tools
-- ✅ FAISS (faiss-cpu 1.13.2 - working)
-- ✅ tiktoken (0.12.0 - working)
+Managed via **uv** with `pyproject.toml` and `uv.lock`.
 
----
-
-## Environment Setup
-
-- ✅ Virtual environment created (.venv)
-- ✅ Dependencies installed via uv
-- ✅ .env file created from template
-- ⏳ .env populated with real API keys (user must do this)
+```bash
+uv sync --extra dev                       # core + dev deps
+uv sync --extra dev --extra research      # include optional research tools
+```
 
 ---
 
 ## Quick Commands
 
 ```bash
-# Activate virtual environment
-source .venv/bin/activate
+# Run tests
+uv run pytest                      # all tests
+uv run pytest -m unit              # unit tests only
+uv run pytest -m contract          # contract tests
+uv run pytest -m integration       # integration tests
 
-# Run unit tests
-PYTHONPATH=. pytest tests/unit/ -v -m unit
+# Code quality
+uv run ruff check src/ tests/
+uv run ruff format src/ tests/
+uv run mypy src/
 
-# Run specific test file
-PYTHONPATH=. pytest tests/unit/test_config.py -v
-
-# Check code
-ruff check src/ tests/
-ruff format src/ tests/
-
-# Type check
-mypy src/
+# Run server
+uv run uvicorn src.main:app --reload
 ```
