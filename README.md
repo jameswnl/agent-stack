@@ -7,26 +7,27 @@ Multi-user RAG service with research capabilities, built on LangGraph.
 - **RAG over Internal Documents**: Query Markdown/Text documents with cited responses
 - **Multi-User Authentication**: JWT-based auth with per-user data isolation
 - **Configurable LLM Providers**: Switch between OpenAI, Anthropic, and others
-- **Research Extensions** (Post-MVP): Web search, MCP integration, advanced workflows
+- **Research Extensions**: Web search (Tavily), query planning, mixed-source citations
 
 ## Quick Start
 
 ### Prerequisites
 
 - Python 3.11+
-- Poetry (recommended) or pip
+- [uv](https://docs.astral.sh/uv/)
 
 ### Installation
 
 ```bash
 # Clone repository
-cd ~/ws/langgraph
+git clone https://github.com/jameswnl/agent-stack.git
+cd agent-stack
 
-# Install dependencies
-poetry install
+# Install dependencies (core + dev)
+uv sync --extra dev
 
-# Or with pip
-pip install -e .
+# Include optional research tools (Tavily, etc.)
+uv sync --extra dev --extra research
 
 # Copy environment template
 cp .env.example .env
@@ -45,40 +46,53 @@ DATABASE_URL=sqlite:///./data/chatbot.db
 
 # Authentication
 JWT_SECRET_KEY=your_secret_key_change_in_production
-```
 
-### Initialize Database
-
-```bash
-# Database will be auto-initialized on first run
-# Or manually initialize:
-python -c "from src.db.database import init_db; init_db()"
+# Optional (for web search)
+TAVILY_API_KEY=your_tavily_key
 ```
 
 ### Run Tests
 
 ```bash
 # All tests
-pytest
+uv run pytest
 
 # Unit tests only
-pytest -m unit
+uv run pytest -m unit
 
 # With coverage
-pytest --cov=src --cov-report=html
+uv run pytest --cov=src --cov-report=html
+
+# Contract tests (mocked external services)
+uv run pytest -m contract
+
+# Live tests (requires real API keys, opt-in)
+uv run pytest -m live
+```
+
+### Run the Server
+
+```bash
+uv run uvicorn src.main:app --reload
 ```
 
 ### Development
 
 ```bash
 # Format code
-ruff format src/ tests/
+uv run ruff format src/ tests/
 
 # Lint
-ruff check src/ tests/
+uv run ruff check src/ tests/
 
 # Type check
-mypy src/
+uv run mypy src/
+
+# Add a dependency
+uv add <package>
+
+# Add a dev dependency
+uv add --extra dev <package>
 ```
 
 ## Project Structure
@@ -99,15 +113,16 @@ tests/
   unit/           # Unit tests (mocked dependencies)
   integration/    # Integration tests (ephemeral DB)
   contract/       # Contract tests for external adapters
+  live/           # Opt-in live tests (require API keys)
   fixtures/       # Test data and fixtures
 ```
 
 ## Milestones
 
 - ✅ **Milestone 1**: Foundation and contracts
-- 🚧 **Milestone 2**: RAG MVP
-- ⏳ **Milestone 3**: Authenticated API MVP
-- ⏳ **Milestone 4**: Research extensions
+- ✅ **Milestone 2**: RAG MVP
+- ✅ **Milestone 3**: Authenticated API MVP
+- ✅ **Milestone 4**: Research extensions
 - ⏳ **Milestone 5**: Advanced operations
 
 ## License
